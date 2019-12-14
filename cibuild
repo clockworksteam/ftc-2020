@@ -1,0 +1,101 @@
+#!/bin/python
+
+import requests
+import time
+import os
+import json
+import sys
+
+
+# make sure pygit is installed
+try:
+    from pygit2 import Repository
+except ModuleNotFoundError:
+    print("PyGit not found. Run \'sudo pip install pygit pygit2\'")
+    exit(1)
+
+
+# read the file containing access token
+pkfile = open(os.path.expanduser('~/.local/share/pk'), "r")
+if pkfile.closed:
+    print("Cannot open token file at \'~/.local/share/pk\'.\nCheck that the file exists.");
+    exit(1)
+
+privateToken = pkfile.read().replace('\n', '')
+pkfile.close()
+currentBranch = Repository('.').head.shorthand
+header = {
+    'PRIVATE-TOKEN': privateToken,
+}
+
+# fetch pipelines
+print("Estimated build time: 4 minutes 20 seconds")
+targetID = -1
+while True:
+    # fetch a list of pipelines
+    response = requests.get('https://git.clockworks.ro/api/v4/projects/3/pipelines', headers = header).content
+    pipelines = json.loads(response)
+
+    # keep only pipelines on current branch and with acceptable statuses 
+    pipelines = [ppl for ppl in pipelines if ppl['ref'] == currentBranch and (ppl['status'] == 'running' or 
+                                                                              ppl['status'] == 'pending' or 
+                                                                              ppl['status'] == 'success' or
+                                                                              ppl['status'] == 'failed')]
+    
+    # continue if pipeline succeded.
+    if pipelines[0]['status'] == 'success':
+        targetID = pipelines[0]['id']
+        print("\nPipeline {} succeded.".format(targetID))
+        break
+    
+    # handle failure cases
+    if pipelines[0]['status'] == 'failed':
+
+        # build a list of pipelines that succeded
+        success = [ppl for ppl in pipelines in ppl['status'] == 'success']
+
+        # if none succeded, exit with error
+        if len(success) == 0:
+            print("\nLatest pipeline on branch \'{}\' has failed. No other succeded pipeline found on current branch.\nExiting".format(currentBranch))
+            exit(1)
+        
+        # ask the user whether to continue with the latest succeded pipeline
+        print("\nLatest pipeline on branch \'{}\' has failed. Continue using the latest succeded pipeline?\n{}".format(currentBranch, success[0]))
+        print('[y/n]-->', end = '')
+        ans = sys.stdin.read(1)
+        if ans == '\n' or ans == 'y':
+            targetID = success[0]['id']
+        break
+
+    # continue waiting for pending or running pipelines
+    print(".", end = '')
+    sys.stdout.flush()
+    time.sleep(5)
+
+# if a succeded pipeline was found, flash the app to phone
+if targetID != -1:
+
+    # fetch main job for pipeline
+    response = requests.get("https://git.clockworks.ro/api/v4/projects/3/pipelines/{}/jobs".format(targetID), headers = header).content
+    jobs = json.loads(response)
+    jobID = jobs[0]['id']
+
+    # download artifacts for main job
+    print("Downloading artifacts for pipeline {} job {}... ".format(targetID, jobID), end = '')
+    sys.stdout.flush()
+    response = requests.get("https://git.clockworks.ro/api/v4/projects/3/jobs/{}/artifacts".format(jobID), headers = header).content
+    print("Done")
+    print("Writing zipfile... ", end = '')
+    zipfile = open(".ci-artifacts.zip", "wb")
+    zipfile.write(response)
+    zipfile.close()
+    print("Done")
+
+    # unzip the archive
+    print("Unzipping...")
+    os.system("unzip -o .ci-artifacts.zip")
+    print("Done")
+
+    # flash to phone
+    print("Running adb...")
+    os.system("adb install -r ./TeamCode/build/outputs/apk/debug/TeamCode-debug.apk")

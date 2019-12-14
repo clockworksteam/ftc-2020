@@ -1,0 +1,36 @@
+
+1|^^^^^^|2         |<-----
+ |      |          |     ^
+ |      |          V     |
+3|^^^^^^|4         ----->|
+
+All motors run forwards
+All angles are pozitive trigonometric oriented
+
+Line(alpha, speed):
+alpha ~ direction [-180, 180] (deg)
+speed ~ speed [0, max_speed] m/sec
+V1 = (speed / max_speed) * cos(alpha + 45)
+V2 = (speed / max_speed) * sin(alpha + 45)
+V3 = -(speed / max_speed) * sin(alpha + 225)
+V4 = -(speed / max_speed) * cos(alpha + 225)
+
+Rotation(ags):
+ags ~ angular speed [0, max_ags] (deg/sec)
+V1 = -ags / max_ags
+V2 = ags / max_ags
+V3 = -ags / max_ags
+V4 = ags / max_ags
+
+
+Motor V's from Line and Rotation can be summed:
+To execute circular movement:
+    alpha, speed, ags ~ constants, time ~ time since began circle/spiral
+    for circle use alpha = 0
+    Line(alpha, speed) + Rotation(ags) ~ circle/spiral, R = (360 * speed * cos(alpha)) / (ags * 2 * pi) - speed * sin(alpha) * time
+To execute line movenent while rotating around own axis:
+    alpha, speed, ags ~ constants, time ~ time since began movement
+    Line(alpha - ags * time, speed) + Rotation(ags)
+    OR
+    speed ~ constant, gyro ~ gyroscope correction, AGS variable in time
+    Line(gyro, speed) + Rotation(AGS)

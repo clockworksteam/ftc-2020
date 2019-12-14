@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <source_groups>
+        <source_group_a4281cea-cf10-4790-bf7f-dd9cf8f1d3ed>
+            <java_standard>8</java_standard>
+            <name>Java Source Group</name>
+            <source_extensions>
+                <source_extension>.java</source_extension>
+            </source_extensions>
+            <source_paths>
+                <source_path>FtcRobotController</source_path>
+                <source_path>TeamCode</source_path>
+            </source_paths>
+            <status>enabled</status>
+            <type>Java Source Group</type>
+            <use_jre_system_library>1</use_jre_system_library>
+        </source_group_a4281cea-cf10-4790-bf7f-dd9cf8f1d3ed>
+        <source_group_e08dc1ef-960d-40cb-82d0-adf3fe54de11>
+            <gradle>
+                <project_file_path>FtcRobotController/build.gradle</project_file_path>
+                <should_index_tests>1</should_index_tests>
+            </gradle>
+            <java_standard>8</java_standard>
+            <name>Java Source Group from Gradle</name>
+            <source_extensions>
+                <source_extension>.java</source_extension>
+            </source_extensions>
+            <status>enabled</status>
+            <type>Java Source Group from Gradle</type>
+        </source_group_e08dc1ef-960d-40cb-82d0-adf3fe54de11>
+    </source_groups>
+    <version>8</version>
+</config>
