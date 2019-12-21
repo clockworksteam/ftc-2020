@@ -17,10 +17,14 @@ import org.firstinspires.ftc.clockworks.algorithm.opencvpipeline.PipelineExample
 public class OpenCVWebcamExample extends LinearOpMode
 {
     OpenCvCamera webcam;
+    PipelineExample pipelineExample = null;
 
     @Override
     public void runOpMode()
     {
+        pipelineExample = new PipelineExample();
+        pipelineExample.init(telemetry);
+
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using a webcam. Note that you will need to
@@ -47,7 +51,7 @@ public class OpenCVWebcamExample extends LinearOpMode
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        webcam.setPipeline(new PipelineExample());
+        webcam.setPipeline(pipelineExample);
 
         /*
          * Tell the webcam to start streaming images to us! Note that you must make sure
