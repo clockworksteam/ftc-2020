@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.clockworks.algorithm.opencvpipeline;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import org.opencv.core.MatOfPoint;
@@ -59,11 +58,11 @@ public class PipelineExample extends OpenCvPipeline {
     private PrintStream         printfile               = null;
     private Scanner             readfile                = null;
     private File                print_file_on_device    = null;
-    private Scalar              mBlobColorRgba          = null;
     private Scalar              mBlobColorHsv           = null;
     private Mat                 mSpectrum               = null;
     private Size                SPECTRUM_SIZE           = null;
     private Scalar              CONTOUR_COLOR           = null;
+
 
         public void init (Telemetry telemetry){
             this.telemetry = telemetry;
@@ -73,10 +72,8 @@ public class PipelineExample extends OpenCvPipeline {
             read_file_on_device = new File("/storage/emulated/0/FTC/read.txt");
             try{
                 readfile = new Scanner(read_file_on_device);
-
             }catch (FileNotFoundException e){
                 e.printStackTrace();
-
             }
 
             Mat touchedRegionRgba = new Mat(8 ,8 , CvType.CV_8UC4);
@@ -84,7 +81,8 @@ public class PipelineExample extends OpenCvPipeline {
             for (int i=0; i<8; i++){
                 for (int j=0; j<8; j++){
                     double aux[] = new double[4];
-                    System.out.println("intrat");
+
+//                    System.out.println("intrat");
 
                     for (int k=0; k<4; k++) {
                         aux[k] = readfile.nextDouble();
@@ -95,7 +93,6 @@ public class PipelineExample extends OpenCvPipeline {
                 }
             }
 
-            mBlobColorRgba = new Scalar(255);
             mBlobColorHsv = new Scalar(255);
             mSpectrum = new Mat();
             SPECTRUM_SIZE = new Size(200, 64);
@@ -111,11 +108,6 @@ public class PipelineExample extends OpenCvPipeline {
 
             for (int i = 0; i < mBlobColorHsv.val.length; i++)
                 mBlobColorHsv.val[i] /= pointCount;
-
-            mBlobColorRgba = Easymethods.converScalarHsv2Rgba(mBlobColorHsv);
-
-            Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
-                    ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
 
             mDetector.setHsvColor(mBlobColorHsv);
 
@@ -139,9 +131,6 @@ public class PipelineExample extends OpenCvPipeline {
          * it to another Mat.
          */
 
-        /*
-         * Draw a simple box around the middle 1/2 of the entire frame
-         */
             mDetector.process(input);
             List<MatOfPoint> contours = mDetector.getContours();
             Log.e(TAG, "Contours count: " + contours.size());
