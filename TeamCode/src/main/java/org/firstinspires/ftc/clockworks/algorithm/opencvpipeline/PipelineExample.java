@@ -3,6 +3,7 @@ package org.firstinspires.ftc.clockworks.algorithm.opencvpipeline;
 import android.util.Log;
 
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -51,7 +52,7 @@ public class PipelineExample extends OpenCvPipeline {
      */
     private static final String TAG                     = "OCVSample::Activity";
 
-
+    private Rect                rect                    = null;
     private Telemetry           telemetry               = null;
     private ColorBlobDetector   mDetector               = null;
     private File                read_file_on_device     = null;
@@ -65,9 +66,22 @@ public class PipelineExample extends OpenCvPipeline {
 
 
         public void init (Telemetry telemetry){
-            this.telemetry = telemetry;
-            mDetector = new ColorBlobDetector();
+            this.telemetry              = telemetry;
+            mDetector                   = new ColorBlobDetector();
+            mBlobColorHsv               = new Scalar(255);
+            mSpectrum                   = new Mat();
+            SPECTRUM_SIZE               = new Size(200, 64);
+            CONTOUR_COLOR               = new Scalar(255,0,0,255);
 
+            rect                        = new Rect();
+            rect.x                      = 32;                    //Since we know the resolution used by the camera, we can hardcode a rect in which we expect to capture the black side of the Skystone
+            rect.y                      = 24;
+            rect.width                  = 256;
+            rect.height                 = 192;
+
+            Mat touchedRegionRgba       = new Mat(8 ,8 , CvType.CV_8UC4);
+            Mat touchedRegionHsv        = new Mat();
+            int pointCount              = 8 * 8;                //the height and the width used to calculate the average color in the other example
 
             read_file_on_device = new File("/storage/emulated/0/FTC/read.txt");
             try{
@@ -76,47 +90,30 @@ public class PipelineExample extends OpenCvPipeline {
                 e.printStackTrace();
             }
 
-            Mat touchedRegionRgba = new Mat(8 ,8 , CvType.CV_8UC4);
 
-            for (int i=0; i<8; i++){
+            for (int i=0; i<8; i++){                            //the height and the width used to calculate the average color in the other example
                 for (int j=0; j<8; j++){
+
                     double aux[] = new double[4];
-
-//                    System.out.println("intrat");
-
                     for (int k=0; k<4; k++) {
                         aux[k] = readfile.nextDouble();
-                        System.out.println(aux[k]);
                     }
-
                     touchedRegionRgba.put(i, j, aux);
                 }
             }
 
-            mBlobColorHsv = new Scalar(255);
-            mSpectrum = new Mat();
-            SPECTRUM_SIZE = new Size(200, 64);
-            CONTOUR_COLOR = new Scalar(255,0,0,255);
 
-            Mat touchedRegionHsv = new Mat();
             Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
+
 
             // Calculate average color of touched region
             mBlobColorHsv = Core.sumElems(touchedRegionHsv);
-
-            int pointCount = 8 * 8; //the height and the width from the other example
-
-            for (int i = 0; i < mBlobColorHsv.val.length; i++)
+            for (int i = 0; i < 4; i++)                     //because a Scalar object is a 4 element vector
                 mBlobColorHsv.val[i] /= pointCount;
-
             mDetector.setHsvColor(mBlobColorHsv);
-
-            Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE, 0, 0, Imgproc.INTER_LINEAR_EXACT);
-
 
             touchedRegionRgba.release();
             touchedRegionHsv.release();
-
 
         }
 
@@ -131,15 +128,22 @@ public class PipelineExample extends OpenCvPipeline {
          * it to another Mat.
          */
 
-            mDetector.process(input);
+            Mat rectangle = input.submat(rect);
+            mDetector.process(rectangle);
             List<MatOfPoint> contours = mDetector.getContours();
             Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(input, contours, -1, CONTOUR_COLOR);
+            Imgproc.drawContours(rectangle, contours, -1, CONTOUR_COLOR);
         /**
          * NOTE: to see how to get data from your pipeline to your OpMode as well as how
          * to change which stage of the pipeline is rendered to the viewport when it is
          * tapped, please see {@link PipelineStageSwitchingExample}
          */
+
+            Imgproc.rectangle(
+                    input,
+                    rect,
+                    new Scalar(0, 255, 0), 4);
+
 
             return input;
     }
