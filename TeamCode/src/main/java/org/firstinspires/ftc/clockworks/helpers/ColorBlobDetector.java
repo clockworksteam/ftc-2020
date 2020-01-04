@@ -38,21 +38,21 @@ public class ColorBlobDetector {
     double maxArea;
 
     public void init(Telemetry telemetry){
-        this.telemetry = telemetry;
+        this.telemetry          = telemetry;
 
-        mLowerBound = new Scalar(0);
-        mUpperBound = new Scalar(0);
-        mMinContourArea = 0.1;
-        mColorRadius = new Scalar(25,50,50,0);
-        mSpectrum = new Mat();
-        mContours = new ArrayList<MatOfPoint>();
+        mLowerBound             = new Scalar(0);
+        mUpperBound             = new Scalar(0);
+        mMinContourArea         = 0.1;
+        mColorRadius            = new Scalar(25,50,50,0);
+        mSpectrum               = new Mat();
+        mContours               = new ArrayList<MatOfPoint>();
 
 
-        mPyrDownMat = new Mat();
-        mHsvMat = new Mat();
-        mMask = new Mat();
-        mDilatedMask = new Mat();
-        mHierarchy = new Mat();
+        mPyrDownMat             = new Mat();
+        mHsvMat                 = new Mat();
+        mMask                   = new Mat();
+        mDilatedMask            = new Mat();
+        mHierarchy              = new Mat();
 
     }
 

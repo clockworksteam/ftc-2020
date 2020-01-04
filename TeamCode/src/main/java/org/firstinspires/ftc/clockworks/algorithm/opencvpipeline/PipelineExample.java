@@ -55,10 +55,11 @@ public class PipelineExample extends OpenCvPipeline {
     private Rect                rect                    = null;
     private Telemetry           telemetry               = null;
     private ColorBlobDetector   mDetector               = null;
-    private File                read_file_on_device     = null;
+    private File                black_file_on_device    = null;
     private PrintStream         printfile               = null;
-    private Scanner             readfile                = null;
-    private File                print_file_on_device    = null;
+    private Scanner             blackfile               = null;
+    private Scanner             yellowfile              = null;
+    private File                yellow_file_on_device   = null;
     private Scalar              mBlobColorHsv           = null;
     private Mat                 mSpectrum               = null;
     private Size                SPECTRUM_SIZE           = null;
@@ -83,20 +84,27 @@ public class PipelineExample extends OpenCvPipeline {
             Mat touchedRegionHsv        = new Mat();
             int pointCount              = 8 * 8;                //the height and the width used to calculate the average color in the other example
 
-            read_file_on_device = new File("/storage/emulated/0/FTC/read.txt");
+            black_file_on_device        = new File("/storage/emulated/0/FTC/black.txt");
             try{
-                readfile = new Scanner(read_file_on_device);
+                blackfile = new Scanner(black_file_on_device);
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+
+            yellow_file_on_device       = new File("/storage/emulated/0/FTC/yellow.txt");
+            try{
+                yellowfile = new Scanner(yellow_file_on_device);
             }catch (FileNotFoundException e){
                 e.printStackTrace();
             }
 
 
-            for (int i=0; i<8; i++){                            //the height and the width used to calculate the average color in the other example
+            for (int i=0; i<8; i++){                            //the height and the width used to calculate the average color of touched region in the other example
                 for (int j=0; j<8; j++){
 
                     double aux[] = new double[4];
                     for (int k=0; k<4; k++) {
-                        aux[k] = readfile.nextDouble();
+                        aux[k] = blackfile.nextDouble();
                     }
                     touchedRegionRgba.put(i, j, aux);
                 }
