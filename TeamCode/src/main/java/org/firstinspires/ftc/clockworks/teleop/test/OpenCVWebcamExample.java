@@ -12,18 +12,24 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.clockworks.algorithm.opencvpipeline.PipelineExample;
+import org.firstinspires.ftc.clockworks.helpers.ColorBlobDetector;
 
 @TeleOp
 public class OpenCVWebcamExample extends LinearOpMode
 {
     OpenCvCamera webcam;
     PipelineExample pipelineExample = null;
+    ColorBlobDetector colorBlobDetector = null;
 
     @Override
     public void runOpMode()
     {
         pipelineExample = new PipelineExample();
-        pipelineExample.init(telemetry);
+
+        colorBlobDetector = new ColorBlobDetector();
+        colorBlobDetector.init(telemetry);
+
+        pipelineExample.init(telemetry , colorBlobDetector);
 
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.

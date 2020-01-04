@@ -65,9 +65,9 @@ public class PipelineExample extends OpenCvPipeline {
     private Scalar              CONTOUR_COLOR           = null;
 
 
-        public void init (Telemetry telemetry){
+        public void init (Telemetry telemetry, ColorBlobDetector colorBlobDetector){
             this.telemetry              = telemetry;
-            mDetector                   = new ColorBlobDetector();
+            mDetector                   = colorBlobDetector;
             mBlobColorHsv               = new Scalar(255);
             mSpectrum                   = new Mat();
             SPECTRUM_SIZE               = new Size(200, 64);
