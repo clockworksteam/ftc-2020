@@ -2,6 +2,7 @@ package org.firstinspires.ftc.clockworks.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.clockworks.algorithm.odometry.HomeMadeOdometry;
@@ -24,8 +25,13 @@ public class Odometry_tester extends LinearOpMode {
     private PositionController positionController = new PositionController();
     private double zeroHeading = 0;
     private Gripping gripper = new Gripping();
+
+
     private HomeMadeOdometry o0 = new HomeMadeOdometry();
     private WizardEXEOdometry o1 = new WizardEXEOdometry();
+    private DcMotor lm;
+    private DcMotor rm;
+    private DcMotor mm;
 
     private int ododo = 0;
     private int l = 0;
@@ -56,6 +62,9 @@ public class Odometry_tester extends LinearOpMode {
         servo.init(hardwareMap, "servo", true);
         gripper.init(hardwareMap, "Gripper");
 
+        lm = hardwareMap.get(DcMotor.class, "okl");
+        rm = hardwareMap.get(DcMotor.class, "okr");
+        mm = hardwareMap.get(DcMotor.class, "okm");
 
         if(ododo == 0) o0.init(100, 1, 10);
         else o1.init(100, 1, 10);

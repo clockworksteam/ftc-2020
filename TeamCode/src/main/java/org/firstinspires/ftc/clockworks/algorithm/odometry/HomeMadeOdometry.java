@@ -9,7 +9,7 @@ package org.firstinspires.ftc.clockworks.algorithm.odometry;
 public class HomeMadeOdometry implements TriOdometry  {
     private double x = 0;
     private double y = 0;
-    private float teta = 0;
+    private double teta = 0;
 
     private double dx = 0;
     private double dy = 0;
@@ -23,7 +23,7 @@ public class HomeMadeOdometry implements TriOdometry  {
     private double enc = 100;
 
     private double d = 10;
-    private double rot = 1;
+    private double rot = 0;
 
     /**
      * Returns x coordinate
@@ -82,6 +82,7 @@ public class HomeMadeOdometry implements TriOdometry  {
         odmid += mid;
 
         dx = (mid/enc)*rot*Math.cos(teta);
+
         dy = (mid/enc)*rot*Math.sin(teta);
 
         x += dx;
@@ -90,8 +91,8 @@ public class HomeMadeOdometry implements TriOdometry  {
         x += ((left/enc)*rot*Math.sin(teta) + (right/enc)*rot*Math.sin(teta))/2;
         y += ((left/enc)*rot*Math.cos(teta) + (right/enc)*rot*Math.cos(teta))/2;
 
-        teta +=  ((right/enc)*rot -  (left/enc)*rot)/d * (180/Math.PI);
-
+        //teta +=  ((right/enc)*rot -  (left/enc)*rot)/d ;
+        teta += ((right - left)*rot/(enc*d));
         t = false;
         return 0;
     }
@@ -100,14 +101,15 @@ public class HomeMadeOdometry implements TriOdometry  {
     public double getAngle() {
         posvect += Math.atan2(dy, dx);
         t = true;
-        return Math.atan2(dy, dx);
+        //return Math.atan2(dy, dx);
+        return teta;
     }
-    public double getAbsoluteAngle() {
+    public double getAbsoluteAngle(int right, int left) {
         if(!t) {
             posvect += Math.atan2(dy, dx);
             t = true;
         }
-        return posvect;
+        return (right-left);
     }
 
     public double getDistance() {
