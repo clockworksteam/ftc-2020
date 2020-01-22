@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.clockworks.helpers.AngleHelper;
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -15,8 +14,8 @@ public class GamepadInput {
 	private Gamepad gp;
 	private double angleRight, amplitudeRight;
 	private double angleLeft, amplitudeLeft;
-	private Map<Character, Boolean> last_value = new HashMap<Character, Boolean>();
-	private Map<Character , Boolean> current_value = new HashMap<Character, Boolean>();
+	private HashMap<String, Boolean> last_value = new HashMap<>();
+	private HashMap<String , Boolean> current_value = new HashMap<>();
 
 /**
  * Initializes the IMU sensor
@@ -24,10 +23,10 @@ public class GamepadInput {
 */
 	public void init(Gamepad gamepad) {
 		gp = gamepad;
-		last_value.put('A' , false);
-		last_value.put('B' , false);
-		last_value.put('X' , false);
-		last_value.put('Y' , false);
+		last_value.put("A" , false);
+		last_value.put("B" , false);
+		last_value.put("X" , false);
+		last_value.put("Y" , false);
 	}
 
 /**
@@ -43,35 +42,6 @@ public class GamepadInput {
 		amplitudeLeft = Math.sqrt(gp.left_stick_x * gp.left_stick_x + gp.left_stick_y * gp.left_stick_y);
 		amplitudeRight = Math.sqrt(gp.right_stick_x * gp.right_stick_x + gp.right_stick_y * gp.right_stick_y);
 	}
-
-
-	public void readDevice_button(){
-
-		current_value.put('A' , gp.a);
-//		System.out.println(current_value);
-		current_value.put('B' , gp.b);
-		current_value.put('X' , gp.x);
-		current_value.put('Y' , gp.y);
-	}
-
-
-	public boolean was_pressed(char button){
-
-		if (current_value.get(button) && (!last_value.get(button)))
-			return true;
-		return false;
-	}
-
-	public void readDevice_button_2(){
-		last_value.put('A' , current_value.get('A'));
-		last_value.put('B' , current_value.get('B'));
-		last_value.put('X' , current_value.get('X'));
-		last_value.put('Y' , current_value.get('Y'));
-	}
-
-
-
-
 
 
 /** 
