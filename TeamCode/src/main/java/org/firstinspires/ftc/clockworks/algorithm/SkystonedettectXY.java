@@ -101,7 +101,7 @@ public class SkystonedettectXY {
      * In this method we pass the "telemetry" object used in the main class and then we
      */
 
-        public void init (HardwareMap hardwareMap , Telemetry telemetry) {
+        public void init (Telemetry telemetry) {
             // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
             // first.
             this.hardwareMap = hardwareMap;
