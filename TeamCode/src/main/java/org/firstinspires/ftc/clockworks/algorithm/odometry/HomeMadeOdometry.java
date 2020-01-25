@@ -1,7 +1,7 @@
 //package org.firstinspires.ftc.clockworks.algorithm.odometry;
 package org.firstinspires.ftc.clockworks.algorithm.odometry;
 
-//Measurement units: degrees, cm
+//Measurement units: radians, cm
 
 /**
  * Implementation of odometry on the mathematical model of the robot
@@ -92,7 +92,7 @@ public class HomeMadeOdometry implements TriOdometry  {
         y += ((left/enc)*rot*Math.cos(teta) + (right/enc)*rot*Math.cos(teta))/2;
 
         //teta +=  ((right/enc)*rot -  (left/enc)*rot)/d ;
-        teta += ((right - left)*rot/(enc*d));
+        teta += ((right - left)*rot/(enc*d))*Math.PI;
         t = false;
         return 0;
     }
