@@ -29,11 +29,11 @@ public class GripperTest extends LinearOpMode{
     @Override
     public void runOpMode() {
         gripper.init(hardwareMap, "Gripper");
-        controller.init(gamepad1);
+        controller.init(gamepad1 , controller);
         waitForStart();
         runtime.reset();
         while(opModeIsActive()) {
-            controller.readDevice();
+         //   controller.readDevice();
 
 
 //            if(controller.was_pressed('B') && (gripper_back_state==false)) {
