@@ -100,7 +100,7 @@ public class Skystonecentering extends LinearOpMode {
 
             /**
              * Here we assume that the robot is already placed with its front to the direction of the Skystone, as the part in which Dorel rotates should have already finished.
-             * We get the direction
+             * "disty" stores the array of projections on the y-axis of the distance from the center of the image to the center of the stones. As we have already mentioned, the array should contain only one stone. After that, there is a similar small loop to the one before which makes sure that "dy" will get a value, as TensorFlow has some performance issues with finding a stone at a certain moment of time. Usually, the recognition works well on 3 out of 5 frames.
              */
 
 
@@ -108,10 +108,15 @@ public class Skystonecentering extends LinearOpMode {
             while (disty.isEmpty()) disty = skystonedettectXY.updateTF().distY();
             dy = disty.get(0);
 
+            gyro.readDevice();
             positionController.setHeading(0);
             positionController.setDirection(0 , 0.8);
 
             pid2.setTarget(-600);
+
+            /**
+             * Here we start our loop as common. We update the gyro with the actual position and then we tell the robot that he should move straight ahead.
+             */
 
            while (opModeIsActive() && Math.abs(dy) < 640) {
                 disty = skystonedettectXY.updateTF().distY();
@@ -124,7 +129,16 @@ public class Skystonecentering extends LinearOpMode {
                 correction = pid2.feed(dy, System.currentTimeMillis() / 1000.0);
                 positionController.setDirection(0, correction).update();
             }
+
+            /**
+             * This loop repeatedly gets the projection on the y-axis of the distance from the center of the image to the center of the Skystone and then it updates the current position of the robot and applies the correction returned by the PID controller. As this piece of code is almost the same as the one in which the robot is rotating, there is also another loop in the main loop which waits for the TensorFlow to find a Skystone.
+             * This loop should end when we achieve a very small distance from the center of the image to the center of the Skystone on the y axis (this means that we are right near the Skystone).
+             */
+
         }
+        /**
+         * Here we free RAM by closing the TensorFlow program.
+         */
         skystonedettectXY.TFclose();
     }}
 
