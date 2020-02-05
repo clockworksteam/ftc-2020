@@ -99,7 +99,7 @@ public class Skystonecentering extends LinearOpMode {
 
 
             /**
-             * Here we assume that the robot is already placed in the direction of the Skystone, as the part in which Dorel rotates should have already finished.
+             * Here we assume that the robot is already placed with its front to the direction of the Skystone, as the part in which Dorel rotates should have already finished.
              * We get the direction
              */
 
