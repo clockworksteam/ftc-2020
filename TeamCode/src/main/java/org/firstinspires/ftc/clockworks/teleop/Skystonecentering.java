@@ -70,6 +70,7 @@ public class Skystonecentering extends LinearOpMode {
 
         while(opModeIsActive()) {
             pid.setTarget(0);
+<<<<<<< HEAD
 
             /**
              * Because this code was a prototype, it does not follow the FTC rules for stone placement. Here we assume that when we start the autonomous the captured area of the camera contains only one Skystone (and no other stones around it).
@@ -78,6 +79,8 @@ public class Skystonecentering extends LinearOpMode {
              * The last lines try to rotate the robot toward the Skystone using the correction returned by the first PID controller.
              * This loop should end when we achieve a very small distance from the center of the image to the center of the Skystone.
              */
+=======
+>>>>>>> origin/tudor/work
             do {
                 gyro.readDevice();
                 distx = skystonedettectXY.updateTF().distX();
@@ -90,7 +93,10 @@ public class Skystonecentering extends LinearOpMode {
                 correction = pid.feed(-dx, System.currentTimeMillis() / 1000.0);
                 positionController.blindRotate(correction).update();
                 correction = pid.feed(0, System.currentTimeMillis() / 1000.0);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/tudor/work
                 telemetry.update();
                 distx = skystonedettectXY.updateTF().distX();
 
@@ -111,12 +117,17 @@ public class Skystonecentering extends LinearOpMode {
             gyro.readDevice();
             positionController.setHeading(0);
             positionController.setDirection(0 , 0.8);
+<<<<<<< HEAD
 
             pid2.setTarget(-600);
 
             /**
              * Here we start our loop as common. We update the gyro with the actual position and then we tell the robot that he should move straight ahead.
              */
+=======
+
+            pid2.setTarget(-600);
+>>>>>>> origin/tudor/work
 
            while (opModeIsActive() && Math.abs(dy) < 640) {
                 disty = skystonedettectXY.updateTF().distY();
@@ -128,6 +139,10 @@ public class Skystonecentering extends LinearOpMode {
                 dy = disty.get(0);
                 correction = pid2.feed(dy, System.currentTimeMillis() / 1000.0);
                 positionController.setDirection(0, correction).update();
+<<<<<<< HEAD
+=======
+                telemetry.update();
+>>>>>>> origin/tudor/work
             }
 
             /**
