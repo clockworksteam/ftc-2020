@@ -59,12 +59,12 @@ public class MecanumTeleOP extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        controller.init(gamepad1);
+        controller.init(gamepad1 , controller);
 
         gyro.readDevice();
         zeroHeading = gyro.getHeading();
         while (opModeIsActive()) {
-            controller.readDevice();
+           // controller.readDevice();
             gyro.readDevice();
 
             if (gamepad1.dpad_up) {
