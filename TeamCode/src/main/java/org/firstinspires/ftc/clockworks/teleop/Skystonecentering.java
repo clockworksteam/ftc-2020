@@ -46,25 +46,18 @@ public class Skystonecentering extends LinearOpMode {
 
         while(opModeIsActive()) {
             pid.setTarget(0);
-            /*
-             * Rotate towards skystone
-             */
             do {
                 gyro.readDevice();
                 distx = skystonedettectXY.updateTF().distX();
-                int n = 0;
                 while (distx.isEmpty()) {
                     gyro.readDevice();
                     distx = skystonedettectXY.updateTF().distX();
                     positionController.blindRotate(0).update();
-                   // telemetry.addLine().addData("waiting", n++);
                 }
                 dx = distx.get(0);
                 correction = pid.feed(-dx, System.currentTimeMillis() / 1000.0);
                 positionController.blindRotate(correction).update();
                 correction = pid.feed(0, System.currentTimeMillis() / 1000.0);
-                //telemetry.addData("dx", dx);
-                //telemetry.addData("correction", correction);
                 telemetry.update();
                 distx = skystonedettectXY.updateTF().distX();
 
@@ -76,12 +69,13 @@ public class Skystonecentering extends LinearOpMode {
             while (disty.isEmpty()) disty = skystonedettectXY.updateTF().distY();
             dy = disty.get(0);
 
+            gyro.readDevice();
             positionController.setHeading(0);
-            ////////positionController.setDirection(0 , 0.8);
+            positionController.setDirection(0 , 0.8);
 
-            //pid2.setTarget(-600);
+            pid2.setTarget(-600);
 
-           while (opModeIsActive() && Math.abs(dy) < 640) {//todo: set the value
+           while (opModeIsActive() && Math.abs(dy) < 640) {
                 disty = skystonedettectXY.updateTF().distY();
                 while (disty.isEmpty()) {
                     disty = skystonedettectXY.updateTF().distY();
@@ -91,10 +85,7 @@ public class Skystonecentering extends LinearOpMode {
                 dy = disty.get(0);
                 correction = pid2.feed(dy, System.currentTimeMillis() / 1000.0);
                 positionController.setDirection(0, correction).update();
-                telemetry.addData("dy", dy);
-                telemetry.addData("correction", correction);
                 telemetry.update();
-
             }
         }
         skystonedettectXY.TFclose();
