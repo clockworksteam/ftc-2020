@@ -15,14 +15,23 @@ public class MotionCommander extends Thread {
         Point lastPoint = queryOdometry();
         while ((trace = getOneTrace()) != null) {
             for (Point point : trace.getPoints()) {
-                drive(lastPoint, point);
+                drive(trace, lastPoint, point);
                 lastPoint = point;
             }
         }
     }
 
-    private void drive(Point from, Point to) {
-        // TODO: Something VERY smart. Drive using tangents and normal components of movement. No feedforward
+    private void drive(Trace trace, Point from, Point to) {
+        Point location  = queryOdometry();
+        double range = to.isRough() ? trace.getRoughTolerance() : trace.getFineTolerance();
+        while (range * range < Point.distanceSquared(location, to)) {
+            // Drive tnagent to the line. PID perpendicular to the line.
+        }
+        if (!to.isRough()) {
+            // PID X,Y towards point
+        } else {
+            // Set final oriesntation
+        }
     }
 
     private Trace getOneTrace() {

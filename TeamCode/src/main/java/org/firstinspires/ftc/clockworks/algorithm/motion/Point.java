@@ -26,4 +26,8 @@ public class Point {
     public boolean isRough() {
         return rough;
     }
+
+    public static double distanceSquared(Point a, Point b) {
+        return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+    }
 }
