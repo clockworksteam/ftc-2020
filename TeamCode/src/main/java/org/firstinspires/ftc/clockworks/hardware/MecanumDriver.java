@@ -52,10 +52,10 @@ public class MecanumDriver {
 		right_front.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-		left_back.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		right_back.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		left_front.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		right_front.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		left_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		right_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		left_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		right_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 		left_back.setPower(0);
 		right_back.setPower(0);
