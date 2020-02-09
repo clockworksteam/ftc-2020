@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.clockworks.algorithm.motion;
 
-import org.firstinspires.ftc.clockworks.helpers.WaitableInteger;
+import org.firstinspires.ftc.clockworks.scheduler.Fiber;
+import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 
-import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class MotionCommander extends Thread {
+public class MotionCommander implements Fiber {
     private final BlockingQueue<Trace> queue = new ArrayBlockingQueue<Trace>(30);
+    private InternalScheduler scheduler;
 
+    private Point lastKnownLocation = null;
+    private Trace activeTrace = null;
+    private Point activeTarget = null;
+
+    /*
     @Override
     public void run() {
         Trace trace;
@@ -20,6 +26,29 @@ public class MotionCommander extends Thread {
             }
         }
     }
+     */
+
+    @Override
+    public void init(InternalScheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public void tick() {
+        lastKnownLocation = queryOdometry();
+
+        if (activeTarget == null) {
+            activeTarget = lastKnownLocation;
+            activeTrace = new Trace(new Point[]{ activeTarget }, 0, 0);
+        }
+
+        // todo: driving, hovering, staying
+    }
+
+    @Override
+    public void deinit() {
+
+    }
 
     private void drive(Trace trace, Point from, Point to) {
         Point location  = queryOdometry();
@@ -30,20 +59,8 @@ public class MotionCommander extends Thread {
         if (!to.isRough()) {
             // PID X,Y towards point
         } else {
-            // Set final oriesntation
+            // Set final orientation
         }
-    }
-
-    private Trace getOneTrace() {
-        Trace trace = null;
-        boolean success = false;
-        while (!success) {
-            try {
-                trace = queue.take();
-                success = true;
-            } catch (InterruptedException iex) { }
-        }
-        return trace;
     }
 
     private Point queryOdometry() {
