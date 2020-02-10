@@ -22,7 +22,7 @@ public class PID {
         this.kp = kp;
         this.kd = kd;
         target = 0;
-        reset();
+        reset(0);
     }
 
     /**
@@ -49,9 +49,9 @@ public class PID {
         return error * kp + integral * ki + derivative * kd; //The equation
     }
 
-    public void reset() {
+    public void reset(double time) {
         lastError = 0;
-        lastTime = 0;
+        lastTime = time;
         integral = 0;
     }
 }
