@@ -59,7 +59,7 @@ public class Odom1 extends LinearOpMode {
                     telemetry.addLine().addData("Y value: ", o0.getY());
                     telemetry.addLine().addData("Angle value: ", o0.getAngle());
                 } else {
-                    o1.feed(leftf, leftf, midf);
+                    o1.feed(leftf, rightf, midf);
                     telemetry.addLine().addData("X value: ", o1.getX());
                     telemetry.addLine().addData("Y value: ", o1.getY());
                 }
