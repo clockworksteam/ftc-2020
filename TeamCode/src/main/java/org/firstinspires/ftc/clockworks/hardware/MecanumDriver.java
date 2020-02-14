@@ -101,7 +101,6 @@ public class MecanumDriver {
 		this.angular_speed = angular_speed;
 		updateMotors();
 		return this;
-
 	}
 
 
@@ -129,7 +128,8 @@ public class MecanumDriver {
 
 		for (int k =0; k<4; k++) v[k] += r[k];
 
-		double maxim = Math.max(Math.max((Math.abs(v[0])) , (Math.abs(v[1]))) , Math.max ((Math.abs(v[2])) , (Math.abs(v[3]))));
+		double maxim = Math.max(Math.max((Math.abs(v[0])) , (Math.abs(v[1])))
+				, Math.max ((Math.abs(v[2])) , (Math.abs(v[3]))));
 
 		for (int k=0; k<4 && maxim > 1; k++) v[k] /= maxim;
 

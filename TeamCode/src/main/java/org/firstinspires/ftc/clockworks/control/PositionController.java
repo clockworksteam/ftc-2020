@@ -15,7 +15,7 @@ public class PositionController {
 
     private MecanumDriver mecanumDriver = new MecanumDriver();
     private IMUSensor imuSensor = new IMUSensor();
-    private AngularPID pid = new AngularPID(0.015, 0.000000, 0.0);//0.02
+    private AngularPID pid = new AngularPID(0.015, 0.000000, 0.0);
     private Telemetry telemetry = null;
     private double angle = 0, power = 0;
     private double blindRotatePower = 0;
