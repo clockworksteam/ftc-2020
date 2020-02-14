@@ -29,32 +29,32 @@ public class GripperTest extends LinearOpMode{
     @Override
     public void runOpMode() {
         gripper.init(hardwareMap, "Gripper");
-        controller.init(gamepad1);
+        controller.init(gamepad1 , controller);
         waitForStart();
         runtime.reset();
         while(opModeIsActive()) {
-            controller.readDevice();
+         //   controller.readDevice();
 
 
-            if(controller.was_pressed('B') && (gripper_back_state==false)) {
-                gripper.openBack();
-                gripper_back_state=true; //it is opened
-            }
-
-            if(controller.was_pressed('B') && (gripper_back_state==true)) {
-                gripper.closeBack();
-                gripper_back_state=false; //it is closed
-            }
-
-            if(controller.was_pressed('Y') && (gripper_front_state==false)) {
-                gripper.openFront();
-                gripper_front_state=true; //it is opened
-            }
-
-            if(controller.was_pressed('Y') && (gripper_front_state==true)) {
-                gripper.closeFront();
-                gripper_front_state=false; //it is closed
-            }
+//            if(controller.was_pressed('B') && (gripper_back_state==false)) {
+//                gripper.openBack();
+//                gripper_back_state=true; //it is opened
+//            }
+//
+//            if(controller.was_pressed('B') && (gripper_back_state==true)) {
+//                gripper.closeBack();
+//                gripper_back_state=false; //it is closed
+//            }
+//
+//            if(controller.was_pressed('Y') && (gripper_front_state==false)) {
+//                gripper.openFront();
+//                gripper_front_state=true; //it is opened
+//            }
+//
+//            if(controller.was_pressed('Y') && (gripper_front_state==true)) {
+//                gripper.closeFront();
+//                gripper_front_state=false; //it is closed
+//            }
 
 
 

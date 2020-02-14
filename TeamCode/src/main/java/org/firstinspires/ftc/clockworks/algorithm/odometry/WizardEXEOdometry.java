@@ -13,8 +13,7 @@ public class WizardEXEOdometry implements TriOdometry {
     //Algorithm constants
     private double robotEncoderWheelDistance;
     private double horizontalEncoderTickPerDegreeOffset;
-
-    double COUNTS_PER_INCH = 100;
+    double COUNTS_PER_INCH;
 
     private int verticalLeftEncoderPositionMultiplier = 1;
     private int verticalRightEncoderPositionMultiplier = 1;
@@ -39,20 +38,21 @@ public class WizardEXEOdometry implements TriOdometry {
         double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
 
-        //Calculate Angle
+        // Calculate Angle
+        // TODO: implement other method of orientation detection. integrating is retarded. gyro?
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+        robotOrientationRadians = robotOrientationRadians + changeInRobotOrientation;
 
         //Get the components of the motion
         normalEncoderWheelPosition = (horizontalEncoder * normalEncoderPositionMultiplier) * COUNTS_PER_INCH;
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
-        double n = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
+        double travelSide = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
 
-        double p = ((rightChange + leftChange) / 2);
+        double travelFront = ((rightChange + leftChange) / 2);
 
         //Calculate and update the position values
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p * Math.sin(robotOrientationRadians) + n * Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p * Math.cos(robotOrientationRadians) - n * Math.sin(robotOrientationRadians));
+        robotGlobalXCoordinatePosition += travelFront * Math.sin(robotOrientationRadians) + travelSide * Math.cos(robotOrientationRadians);
+        robotGlobalYCoordinatePosition += travelFront * Math.cos(robotOrientationRadians) - travelSide * Math.sin(robotOrientationRadians);
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
