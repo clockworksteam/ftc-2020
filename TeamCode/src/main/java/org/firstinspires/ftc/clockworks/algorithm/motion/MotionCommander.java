@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.clockworks.algorithm.motion;
 
 import org.firstinspires.ftc.clockworks.algorithm.PID;
+import org.firstinspires.ftc.clockworks.control.PositionController;
 import org.firstinspires.ftc.clockworks.scheduler.Fiber;
 import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 
@@ -14,6 +15,9 @@ public class MotionCommander implements Fiber {
     private static final double CENTERING_Kp = 0;
     private static final double CENTERING_Ki = 0;
     private static final double CENTERING_Kd = 0;
+    private static final double STOPPING_Kp = 0;
+    private static final double STOPPING_Ki = 0;
+    private static final double STOPPING_Kd = 0;
     private static final int QUEUE_SIZE = 30;
 
 
@@ -27,6 +31,9 @@ public class MotionCommander implements Fiber {
 
     private PID navigationCompensator = new PID(NAVIGATION_Kp, NAVIGATION_Ki, NAVIGATION_Kd);
     private PID centeringCompensator = new PID(CENTERING_Kp, CENTERING_Ki, CENTERING_Kd);
+    private PID stoppingCompensator = new PID(STOPPING_Kp, STOPPING_Ki, STOPPING_Kd);
+
+    private final PositionController movementExecutor;
 
     private State state = State.CENTERING;
     private Point lastKnownLocation = null;
@@ -36,6 +43,10 @@ public class MotionCommander implements Fiber {
     private double range = 0;
     private boolean doneOscillating = false;
 
+
+    public MotionCommander(PositionController movementExecutor) {
+        this.movementExecutor = movementExecutor;
+    }
 
     @Override
     public void init(InternalScheduler scheduler) {
@@ -95,6 +106,7 @@ public class MotionCommander implements Fiber {
         if (state == State.STOPPED) {
             stop();
         }
+        movementExecutor.update();
     }
 
     @Override
@@ -107,13 +119,17 @@ public class MotionCommander implements Fiber {
     }
 
     private void center() {
-        // TODO: Centering
+        double distance = Math.sqrt(Point.distanceSquared(lastKnownLocation, activeTarget));
+        double angle = Math.atan2(activeTarget.getY() - lastKnownLocation.getY(), activeTarget.getX() - lastKnownLocation.getX());
+        double correction = centeringCompensator.feed(distance, System.currentTimeMillis() / 1000.0);
+        movementExecutor.setDirection(angle, correction);
     }
 
     private void stop() {
-        double distance = Point.distanceSquared(lastKnownLocation, fullStopPosition);
-        double correction = centeringCompensator.feed(distance, System.currentTimeMillis() / 1000.0);
-        // TODO: apply correction
+        double distance = Math.sqrt(Point.distanceSquared(lastKnownLocation, fullStopPosition));
+        double angle = Math.atan2(fullStopPosition.getY() - lastKnownLocation.getY(), fullStopPosition.getX() - lastKnownLocation.getX());
+        double correction = stoppingCompensator.feed(distance, System.currentTimeMillis() / 1000.0);
+        movementExecutor.setDirection(angle, correction);
     }
 
     private Point tryGetNextTarget() {
