@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.clockworks.hardware.BackServos;
-import org.firstinspires.ftc.clockworks.hardware.test.Gripper;
-import org.firstinspires.ftc.clockworks.hardware.Gripping;
 import org.firstinspires.ftc.clockworks.helpers.AngleHelper;
 import org.firstinspires.ftc.clockworks.hardware.MecanumDriver;
 import org.firstinspires.ftc.clockworks.hardware.GamepadInput;
