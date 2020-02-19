@@ -6,25 +6,18 @@ public class WizardEXEOdometry implements TriOdometry {
 
 
     //Position variables used for storage and calculations
-    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
+    private double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
     private double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
 
     //Algorithm constants
-    private double robotEncoderWheelDistance;
-    private double horizontalEncoderTickPerDegreeOffset;
-    double COUNTS_PER_INCH;
+    private final static double robotEncoderWheelDistance = 0.2;
+    private final static double horizontalEncoderTickPerDegreeOffset = 0.3;
+    private final static double COUNTS_PER_METER = 9473.6842105263157894736842105263;
 
-    private int verticalLeftEncoderPositionMultiplier = 1;
-    private int verticalRightEncoderPositionMultiplier = 1;
-    private int normalEncoderPositionMultiplier = 1;
-
-
-    public void init(double Enc, double D, double Rot) {
-        COUNTS_PER_INCH = Enc;
-        robotEncoderWheelDistance = D;
-        horizontalEncoderTickPerDegreeOffset = Enc;
-    }
+    private final static int verticalLeftEncoderPositionMultiplier = 1;
+    private final static int verticalRightEncoderPositionMultiplier = 1;
+    private final static int normalEncoderPositionMultiplier = 1;
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
@@ -32,8 +25,8 @@ public class WizardEXEOdometry implements TriOdometry {
     @Override
     public double feed(int verticalEncoderLeft, int verticalEncoderRight, int horizontalEncoder) {
         //Get Current Positions
-        verticalLeftEncoderWheelPosition = (verticalEncoderLeft * verticalLeftEncoderPositionMultiplier) * COUNTS_PER_INCH;
-        verticalRightEncoderWheelPosition = (verticalEncoderRight * verticalRightEncoderPositionMultiplier) * COUNTS_PER_INCH;
+        verticalLeftEncoderWheelPosition = (verticalEncoderLeft * verticalLeftEncoderPositionMultiplier) * COUNTS_PER_METER;
+        verticalRightEncoderWheelPosition = (verticalEncoderRight * verticalRightEncoderPositionMultiplier) * COUNTS_PER_METER;
 
         double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
@@ -44,7 +37,7 @@ public class WizardEXEOdometry implements TriOdometry {
         robotOrientationRadians = robotOrientationRadians + changeInRobotOrientation;
 
         //Get the components of the motion
-        normalEncoderWheelPosition = (horizontalEncoder * normalEncoderPositionMultiplier) * COUNTS_PER_INCH;
+        normalEncoderWheelPosition = (horizontalEncoder * normalEncoderPositionMultiplier) * COUNTS_PER_METER;
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
         double travelSide = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
 
