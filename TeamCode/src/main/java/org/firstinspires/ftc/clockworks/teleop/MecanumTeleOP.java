@@ -51,8 +51,8 @@ public class MecanumTeleOP extends LinearOpMode {
         wheels.init(telemetry, hardwareMap, "ok");
         gyro.init (telemetry, hardwareMap, "imu");
         positionController.init(telemetry, wheels, gyro);
-        servo.init(hardwareMap, "servo", true);
-        gripper.init(hardwareMap, "Gripper");
+       // servo.init(hardwareMap, "servo", true);
+       // gripper.init(hardwareMap, "Gripper");
 
 
 
@@ -68,32 +68,32 @@ public class MecanumTeleOP extends LinearOpMode {
             gyro.readDevice();
 
             if (gamepad1.dpad_up) {
-                gripper.liftUp();
+                //gripper.liftUp();
             }
             if (gamepad1.dpad_down) {
-                gripper.liftDown();
+                //gripper.liftDown();
             }
             if (!gamepad1.dpad_up && !gamepad2.dpad_down) {
-                gripper.liftLock();
+               // gripper.liftLock();
             }
 
-            if (xState != gamepad1.x && gamepad1.x) {
+           /* if (xState != gamepad1.x && gamepad1.x) {
                 closed = !closed;
                 if (closed) {
                     gripper.closeFront();
                 } else {
                     gripper.openFront();
                 }
-            }
+            }*/
             xState = gamepad1.x;
 
             if(bState != gamepad1.b && gamepad1.b) {
-                servo.prins();
+                //servo.prins();
             }
             bState = gamepad1.b;
 
             if (!rotated && gamepad1.left_bumper) {
-                gripper.paralelrotationfront();
+                //gripper.paralelrotationfront();
                 rotated = true;
             }
 
