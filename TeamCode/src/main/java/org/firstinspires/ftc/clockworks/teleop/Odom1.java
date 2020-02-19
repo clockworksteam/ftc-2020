@@ -14,65 +14,37 @@ public class Odom1 extends LinearOpMode {
     private DcMotor mid;
     private DcMotor left;
     private DcMotor right;
-    private HomeMadeOdometry o0 = new HomeMadeOdometry();
     private WizardEXEOdometry o1 = new WizardEXEOdometry();
-    private int ododo = 1;
-    private int t = 0;
-
-    private int midf = 0;
-    private int rightf = 0;
-    private int leftf = 0;
-
-    private int mF = 0;
-    private int rF = 0;
-    private int lF = 0;
 
     @Override
     public void runOpMode() {
         mid = hardwareMap.get(DcMotor.class, "mid");
         left = hardwareMap.get(DcMotor.class, "left");
         right = hardwareMap.get(DcMotor.class, "right");
-       // dm = hardwareMap.get(DcMotor.class, "qwe");
-        if (ododo == 0) o0.init(288, 25, 9);
-        else o1.init(288, 25, 9);
 
         waitForStart();
 
         try {
-
-
             while (opModeIsActive()) {
-                midf = mid.getCurrentPosition();
-                leftf = left.getCurrentPosition();
-                rightf = right.getCurrentPosition();
-
+                int midf = mid.getCurrentPosition();
+                int leftf = left.getCurrentPosition();
+                int rightf = right.getCurrentPosition();
 
                 telemetry.addLine().addData("mid: ", midf);
                 telemetry.addLine().addData("left: " , leftf);
                 telemetry.addLine().addData("right: " , rightf);
 
-                if (ododo == 0) {
+                o1.feed(leftf, rightf, midf);
 
-                    o0.feed(leftf - lF, rightf - rF, midf - mF);
+                telemetry.addLine().addData("X value: ", o1.getX());
+                telemetry.addLine().addData("Y value: ", o1.getY());
 
-                    telemetry.addLine().addData("X value: ", o0.getX());
-                    telemetry.addLine().addData("Y value: ", o0.getY());
-                    telemetry.addLine().addData("Angle value: ", o0.getAngle());
-                } else {
-                    o1.feed(leftf, rightf, midf);
-                    telemetry.addLine().addData("X value: ", o1.getX());
-                    telemetry.addLine().addData("Y value: ", o1.getY());
-                }
-                mF = midf;
-                rF = rightf;
-                lF = leftf;
                 telemetry.update();
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             telemetry.addLine().addData("Exceeption ", e.toString());
             telemetry.update();
+            while (true) { }
         }
 
-      //  while (true);
     }}
