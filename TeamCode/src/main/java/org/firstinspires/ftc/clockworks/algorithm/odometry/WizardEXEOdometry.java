@@ -2,12 +2,15 @@
 package org.firstinspires.ftc.clockworks.algorithm.odometry;
 
 
-public class WizardEXEOdometry implements TriOdometry {
+import java.math.BigDecimal;
+import java.math.MathContext;
 
+public class WizardEXEOdometry implements TriOdometry {
+    private static final MathContext MC = MathContext.UNLIMITED;
 
     //Position variables used for storage and calculations
-    private double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
-    private double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
+
+    private BigDecimal robotGlobalXCoordinatePosition = new BigDecimal(0, MC), robotGlobalYCoordinatePosition = new BigDecimal(0, MC), robotOrientationRadians = new BigDecimal(0, MC);
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
 
     //Algorithm constants
@@ -25,27 +28,28 @@ public class WizardEXEOdometry implements TriOdometry {
     @Override
     public double feed(int verticalEncoderLeft, int verticalEncoderRight, int horizontalEncoder) {
         //Get Current Positions
-        verticalLeftEncoderWheelPosition = (verticalEncoderLeft * verticalLeftEncoderPositionMultiplier) * COUNTS_PER_METER;
-        verticalRightEncoderWheelPosition = (verticalEncoderRight * verticalRightEncoderPositionMultiplier) * COUNTS_PER_METER;
+        double verticalLeftEncoderWheelPosition = (verticalEncoderLeft * verticalLeftEncoderPositionMultiplier) * COUNTS_PER_METER;
+        double verticalRightEncoderWheelPosition = (verticalEncoderRight * verticalRightEncoderPositionMultiplier) * COUNTS_PER_METER;
 
         double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
 
         // Calculate Angle
         // TODO: implement other method of orientation detection. integrating is retarded. gyro?
-        changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians = robotOrientationRadians + changeInRobotOrientation;
+        double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+        robotOrientationRadians = robotOrientationRadians.add(new BigDecimal(changeInRobotOrientation, MC));
 
         //Get the components of the motion
-        normalEncoderWheelPosition = (horizontalEncoder * normalEncoderPositionMultiplier) * COUNTS_PER_METER;
+        double normalEncoderWheelPosition = (horizontalEncoder * normalEncoderPositionMultiplier) * COUNTS_PER_METER;
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
         double travelSide = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
 
         double travelFront = ((rightChange + leftChange) / 2);
 
         //Calculate and update the position values
-        robotGlobalXCoordinatePosition += travelFront * Math.sin(robotOrientationRadians) + travelSide * Math.cos(robotOrientationRadians);
-        robotGlobalYCoordinatePosition += travelFront * Math.cos(robotOrientationRadians) - travelSide * Math.sin(robotOrientationRadians);
+
+        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition.add(new BigDecimal(travelFront * Math.sin(robotOrientationRadians.doubleValue()) + travelSide * Math.cos(robotOrientationRadians.doubleValue()), MC));
+        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition.add(new BigDecimal(travelFront * Math.cos(robotOrientationRadians.doubleValue()) - travelSide * Math.sin(robotOrientationRadians.doubleValue()), MC));
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
@@ -61,7 +65,7 @@ public class WizardEXEOdometry implements TriOdometry {
      */
     @Override
     public double getX() {
-        return robotGlobalXCoordinatePosition;
+        return robotGlobalXCoordinatePosition.doubleValue();
     }
 
     /**
@@ -71,7 +75,7 @@ public class WizardEXEOdometry implements TriOdometry {
      */
     @Override
     public double getY() {
-        return robotGlobalYCoordinatePosition;
+        return robotGlobalYCoordinatePosition.doubleValue();
     }
 
     /**
@@ -80,7 +84,7 @@ public class WizardEXEOdometry implements TriOdometry {
      * @return global orientation, in degrees
      */
     public double returnOrientation() {
-        return Math.toDegrees(robotOrientationRadians) % 360;
+        return Math.toDegrees(robotOrientationRadians.doubleValue()) % 360;
     }
 
 
