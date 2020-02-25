@@ -83,7 +83,7 @@ public class WizardEXEOdometry implements TriOdometry {
      *
      * @return global orientation, in degrees
      */
-    public double returnOrientation() {
+    public double getOrientation() {
         return Math.toDegrees(robotOrientationRadians.doubleValue()) % 360;
     }
 
