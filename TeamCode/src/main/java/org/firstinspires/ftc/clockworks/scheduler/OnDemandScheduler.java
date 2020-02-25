@@ -33,6 +33,7 @@ public class OnDemandScheduler extends Thread implements InternalScheduler, Exte
                 fiber.init(this);
                 fibers.add(fiber);
             }
+            awaitingInit.clear();
             for (Fiber fiber : fibers) {
                 fiber.tick();
             }
@@ -40,6 +41,7 @@ public class OnDemandScheduler extends Thread implements InternalScheduler, Exte
                 fibers.remove(fiber);
                 fiber.deinit();
             }
+            awaitingDeinit.clear();
         }
     }
 
