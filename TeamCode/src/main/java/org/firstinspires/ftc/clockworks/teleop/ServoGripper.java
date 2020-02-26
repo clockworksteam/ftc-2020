@@ -5,39 +5,50 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @TeleOp
 public class ServoGripper extends LinearOpMode {
-    Servo left1 = null;
-    Servo left2 = null;
-    Servo right1 = null;
-    Servo right2 = null;
+    Servo servo0 = null;
+    Servo servo1 = null;
+    Servo servo2 = null;
+    Servo servo3 = null;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        left1 = hardwareMap.get(Servo.class , "left1");
-        left2 = hardwareMap.get(Servo.class , "left2");
-        right1 = hardwareMap.get(Servo.class , "right1");
-        right2 = hardwareMap.get(Servo.class , "right2");
+        servo0 = hardwareMap.get(Servo.class , "servo0");
+        servo1 = hardwareMap.get(Servo.class , "servo1");
+        servo2 = hardwareMap.get(Servo.class , "servo2");
+        servo3 = hardwareMap.get(Servo.class , "servo3");
 
         waitForStart();
 
-     //   left1.setPosition(0.33);
- //     left2.setPosition(0.8);
-        right1.setPosition(0.0);
-   //     right2.setPosition(0.22);
 
-        Thread.sleep(3000);
+ /*       public void closeGrip() {
+            servo0.setPosition(0.5);
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
+            servo3.setPosition(0.5);
+        }
 
-        System.out.println ("lef1: " + left1.getPosition());
-        System.out.println ("left2: " + left2.getPosition());
-        System.out.println ("right1: " + right1.getPosition());
-        System.out.println ("right2: " + right2.getPosition());
+   /*      public void openGrip() {
+            servo0.setPosition(0.5 - 5.0 / 27);
+            servo1.setPosition(0.5 + 5.0 / 27);
+            servo2.setPosition(0.5 - 5.0 / 27);
+            servo3.setPosition(0.5 + 5.0 / 27);
+        }*/
+        while (true) {
+            System.out.println ("lef1: " + servo0.getPosition());
+            System.out.println ("servo1: " + servo1.getPosition());
+            System.out.println ("servo2: " + servo2.getPosition());
+            System.out.println ("servo3: " + servo3.getPosition());
+        }
+
+        //Thread.sleep(3000);
 
 
-        Thread.sleep(3000);
+
+
+        //Thread.sleep(3000);
 
     }
 }
