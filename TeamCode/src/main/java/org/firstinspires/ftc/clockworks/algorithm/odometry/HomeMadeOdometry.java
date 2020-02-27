@@ -6,7 +6,7 @@ package org.firstinspires.ftc.clockworks.algorithm.odometry;
 /**
  * Implementation of odometry on the mathematical model of the robot
  */
-public class HomeMadeOdometry implements TriOdometry  {
+public abstract class HomeMadeOdometry implements TriOdometry  {
     private double x = 0;
     private double y = 0;
     private double teta = 0;
