@@ -34,6 +34,11 @@ public abstract class HomeMadeOdometry implements TriOdometry  {
         return x;
     }
 
+    @Override
+    public double getOrientation() {return 0;}
+
+
+
     /**
      * Returns y coordinate
      * @return
