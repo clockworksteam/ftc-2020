@@ -22,13 +22,24 @@ public class ServoGripper extends LinearOpMode {
 
         waitForStart();
 
+        while (opModeIsActive()) {
 
-     // public void closeGrip() {
-            servo0.setPosition(0.5);
-            servo1.setPosition(0.5);
-            servo2.setPosition(0.5);
-            servo3.setPosition(0.5);
-        //}
+            // public void closeGrip() {
+
+            if (gamepad1.x) {
+                servo0.setPosition(0.35);
+                servo1.setPosition(0.65);
+                servo2.setPosition(0.35);
+                servo3.setPosition(0.65);
+            }
+
+            if (gamepad1.a){
+                servo0.setPosition(0.5);
+                servo1.setPosition(0.5);
+                servo2.setPosition(0.5);
+                servo3.setPosition(0.5);
+            }
+            //}
 
         /* public void openGrip() {
             servo0.setPosition(0.5 - 5.0 / 27);
@@ -36,19 +47,17 @@ public class ServoGripper extends LinearOpMode {
             servo2.setPosition(0.5 - 5.0 / 27);
             servo3.setPosition(0.5 + 5.0 / 27);
        // }*/
-        while (true) {
-            System.out.println ("lef1: " + servo0.getPosition());
-            System.out.println ("servo1: " + servo1.getPosition());
-            System.out.println ("servo2: " + servo2.getPosition());
-            System.out.println ("servo3: " + servo3.getPosition());
+//        while (true) {
+//            System.out.println ("servo1: " + servo0.getPosition());
+//            System.out.println ("servo1: " + servo1.getPosition());
+//            System.out.println ("servo2: " + servo2.getPosition());
+//            System.out.println ("servo3: " + servo3.getPosition());
+//        }
+//
+//        //Thread.sleep(3000);
+
+
+            //Thread.sleep(3000);
         }
-
-        //Thread.sleep(3000);
-
-
-
-
-        //Thread.sleep(3000);
-
     }
 }
