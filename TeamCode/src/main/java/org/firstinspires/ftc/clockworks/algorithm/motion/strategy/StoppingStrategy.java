@@ -13,6 +13,7 @@ public class StoppingStrategy implements MotionStrategy {
     @Override
     public void begin(Point lastTarget, Point activeTarget) {
         this.activeTarget = activeTarget;
+        compensator.reset(System.currentTimeMillis() / 1000.0);
     }
 
     @Override

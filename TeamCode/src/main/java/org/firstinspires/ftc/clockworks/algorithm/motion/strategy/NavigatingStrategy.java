@@ -14,6 +14,7 @@ public class NavigatingStrategy implements MotionStrategy {
     public void begin(Point lastTarget, Point activeTarget) {
         this.lastTarget = lastTarget;
         this.activeTarget = activeTarget;
+        compensator.reset(System.currentTimeMillis() / 1000.0);
     }
 
     @Override
