@@ -18,7 +18,7 @@ public class MotionCommander implements Fiber {
 
 
     private enum State {
-        NAVIGATING, CENTERING, STOPPED,
+        NAVIGATING, STOPPING,
     }
 
     private final BlockingQueue<Trace> queue = new ArrayBlockingQueue<Trace>(QUEUE_SIZE);
@@ -30,10 +30,9 @@ public class MotionCommander implements Fiber {
     private final Odometry odometry;
 
     private MotionStrategy strategy = null;
-    private HashMap<MotionStrategy, String> strategyMap = new HashMap<>();
+    private HashMap<String, MotionStrategy> strategyMap = new HashMap<>();
 
-    private State state = State.CENTERING;
-    private Point lastKnownLocation = null;
+    private State state = State.STOPPING;
     private Point lastTarget = null;
     private Trace activeTrace = null;
     private Point activeTarget = null;
@@ -42,8 +41,8 @@ public class MotionCommander implements Fiber {
     public MotionCommander(PositionController movementExecutor, Odometry odometry) {
         this.movementExecutor = movementExecutor;
         this.odometry = odometry;
-        strategyMap.put(new StoppingStrategy(), "stopping");
-        strategyMap.put(new NavigatingStrategy(), "navigating");
+        strategyMap.put("stopping", new StoppingStrategy());
+        strategyMap.put("navigating", new NavigatingStrategy());
     }
 
     @Override
@@ -53,29 +52,26 @@ public class MotionCommander implements Fiber {
 
     @Override
     public void tick() {
-        lastKnownLocation = queryOdometryPosition();
+        Point lastKnownLocation = queryOdometryPosition();
 
         if (activeTarget == null) {
             activeTarget = lastKnownLocation;
-            lastTarget = null;
+            lastTarget = lastKnownLocation;
             activeTrace = new Trace(new Point[]{ activeTarget }, 0, 0);
         }
 
-        if (state == State.NAVIGATING && range * range > Point.distanceSquared(activeTarget, lastKnownLocation)) {
-            if (activeTarget.isRough()) {
-                Point next = tryGetNextTarget();
-                if (next == null) {
-
-                } else {
-                    activeTrace = activeTrace.hasPoint(next) ? activeTrace : queue.poll();
-                    range = next.isRough() ? activeTrace.getSkipTolerance() : activeTrace.getContinueTolerance();
-
-                }
+        if ((state == State.NAVIGATING && range * range >= Point.distanceSquared(activeTarget, lastKnownLocation)) || state == State.STOPPING) {
+            Point next = tryGetNextTarget();
+            if (next == null) {
+                state = State.STOPPING;
+                renewStrategy(null);
             } else {
-                range = activeTrace.getContinueTolerance();
+                activeTrace = activeTrace.hasPoint(next) ? activeTrace : queue.poll();
+                range = next.isRough() ? activeTrace.getSkipTolerance() : activeTrace.getContinueTolerance();
+                state = State.NAVIGATING;
+                renewStrategy(next);
             }
         }
-
 
         if (strategy != null) strategy.run(lastKnownLocation, movementExecutor);
 
@@ -87,6 +83,22 @@ public class MotionCommander implements Fiber {
         // Dummy method
     }
 
+    private void renewStrategy(Point next) {
+        if (next != null) {
+            lastTarget = activeTarget;
+            activeTarget = next;
+        }
+        strategy = null;
+        if (state == State.NAVIGATING) {
+            strategy = strategyMap.get("navigating");
+        }
+        if (state == State.STOPPING) {
+            strategy = strategyMap.get("stopping");
+        }
+        if (strategy != null) {
+            strategy.begin(lastTarget, activeTarget);
+        }
+    }
 
     private Point tryGetNextTarget() {
         Point next = null;
