@@ -2,31 +2,25 @@ package org.firstinspires.ftc.clockworks.algorithm.motion;
 
 public class Trace {
     private final Point[] points;
-    private final double roughTolerance;
-    private final double fineTolerance;
-    private final boolean fullStop;
+    private final double skipTolerance;
+    private final double continueTolerance;
 
-    public Trace(Point[] points, double roughTolerance, double fineTolerance, boolean fullStop) {
+    public Trace(Point[] points, double skipTolerance, double continueTolerance) {
         this.points = points;
-        this.roughTolerance = roughTolerance;
-        this.fineTolerance = fineTolerance;
-        this.fullStop = fullStop;
+        this.skipTolerance = skipTolerance;
+        this.continueTolerance = continueTolerance;
     }
 
     public Point[] getPoints() {
         return points;
     }
 
-    public double getRoughTolerance() {
-        return roughTolerance;
+    public double getSkipTolerance() {
+        return skipTolerance;
     }
 
-    public double getFineTolerance() {
-        return fineTolerance;
-    }
-
-    public boolean hasFullstop() {
-        return fullStop;
+    public double getContinueTolerance() {
+        return continueTolerance;
     }
 
     public boolean hasPoint(Point p) {

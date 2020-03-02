@@ -1,23 +1,19 @@
 package org.firstinspires.ftc.clockworks.algorithm.motion;
 
 import org.firstinspires.ftc.clockworks.algorithm.PID;
+import org.firstinspires.ftc.clockworks.algorithm.motion.strategy.MotionStrategy;
+import org.firstinspires.ftc.clockworks.algorithm.motion.strategy.NavigatingStrategy;
+import org.firstinspires.ftc.clockworks.algorithm.motion.strategy.StoppingStrategy;
+import org.firstinspires.ftc.clockworks.control.Odometry;
 import org.firstinspires.ftc.clockworks.control.PositionController;
 import org.firstinspires.ftc.clockworks.scheduler.Fiber;
 import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 
+import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class MotionCommander implements Fiber {
-    private static final double NAVIGATION_Kp = 0;
-    private static final double NAVIGATION_Ki = 0;
-    private static final double NAVIGATION_Kd = 0;
-    private static final double CENTERING_Kp = 0;
-    private static final double CENTERING_Ki = 0;
-    private static final double CENTERING_Kd = 0;
-    private static final double STOPPING_Kp = 0;
-    private static final double STOPPING_Ki = 0;
-    private static final double STOPPING_Kd = 0;
     private static final int QUEUE_SIZE = 30;
 
 
@@ -29,23 +25,25 @@ public class MotionCommander implements Fiber {
 
     private InternalScheduler scheduler;
 
-    private PID navigationCompensator = new PID(NAVIGATION_Kp, NAVIGATION_Ki, NAVIGATION_Kd);
-    private PID centeringCompensator = new PID(CENTERING_Kp, CENTERING_Ki, CENTERING_Kd);
-    private PID stoppingCompensator = new PID(STOPPING_Kp, STOPPING_Ki, STOPPING_Kd);
 
     private final PositionController movementExecutor;
+    private final Odometry odometry;
+
+    private MotionStrategy strategy = null;
+    private HashMap<MotionStrategy, String> strategyMap = new HashMap<>();
 
     private State state = State.CENTERING;
     private Point lastKnownLocation = null;
-    private Point fullStopPosition = null;
+    private Point lastTarget = null;
     private Trace activeTrace = null;
     private Point activeTarget = null;
     private double range = 0;
-    private boolean doneOscillating = false;
 
-
-    public MotionCommander(PositionController movementExecutor) {
+    public MotionCommander(PositionController movementExecutor, Odometry odometry) {
         this.movementExecutor = movementExecutor;
+        this.odometry = odometry;
+        strategyMap.put(new StoppingStrategy(), "stopping");
+        strategyMap.put(new NavigatingStrategy(), "navigating");
     }
 
     @Override
@@ -59,53 +57,28 @@ public class MotionCommander implements Fiber {
 
         if (activeTarget == null) {
             activeTarget = lastKnownLocation;
-            activeTrace = new Trace(new Point[]{ activeTarget }, 0, 0, true);
+            lastTarget = null;
+            activeTrace = new Trace(new Point[]{ activeTarget }, 0, 0);
         }
 
         if (state == State.NAVIGATING && range * range > Point.distanceSquared(activeTarget, lastKnownLocation)) {
             if (activeTarget.isRough()) {
                 Point next = tryGetNextTarget();
                 if (next == null) {
-                    if (activeTrace.hasFullstop()) {
-                        fullStopPosition = lastKnownLocation;
-                        state = State.STOPPED;
-                        centeringCompensator.reset(System.currentTimeMillis() / 1000.0);
-                    } else {
-                        range = activeTrace.getRoughTolerance();
-                        doneOscillating = false;
-                        state = State.CENTERING;
-                        centeringCompensator.reset(System.currentTimeMillis() / 1000.0);
-                    }
+
                 } else {
                     activeTrace = activeTrace.hasPoint(next) ? activeTrace : queue.poll();
-                    activeTarget = next;
-                    range = next.isRough() ? activeTrace.getRoughTolerance() : activeTrace.getFineTolerance();
-                    navigationCompensator.reset(System.currentTimeMillis() / 1000.0);
+                    range = next.isRough() ? activeTrace.getSkipTolerance() : activeTrace.getContinueTolerance();
+
                 }
             } else {
-                range = activeTrace.getFineTolerance();
-                doneOscillating = false;
-                state = State.CENTERING;
-                centeringCompensator.reset(System.currentTimeMillis() / 1000.0);
-            }
-        }
-        if (state == State.CENTERING && doneOscillating) {
-            if (activeTrace.hasFullstop()) {
-                state = State.STOPPED;
-                fullStopPosition = lastKnownLocation;
-                centeringCompensator.reset(System.currentTimeMillis() / 1000.0);
+                range = activeTrace.getContinueTolerance();
             }
         }
 
-        if (state == State.NAVIGATING) {
-            navigate();
-        }
-        if (state == State.CENTERING) {
-            center();
-        }
-        if (state == State.STOPPED) {
-            stop();
-        }
+
+        if (strategy != null) strategy.run(lastKnownLocation, movementExecutor);
+
         movementExecutor.update();
     }
 
@@ -114,23 +87,6 @@ public class MotionCommander implements Fiber {
         // Dummy method
     }
 
-    private void navigate() {
-        // TODO: Navigation
-    }
-
-    private void center() {
-        double distance = Math.sqrt(Point.distanceSquared(lastKnownLocation, activeTarget));
-        double angle = Math.atan2(activeTarget.getY() - lastKnownLocation.getY(), activeTarget.getX() - lastKnownLocation.getX());
-        double correction = centeringCompensator.feed(distance, System.currentTimeMillis() / 1000.0);
-        movementExecutor.setDirection(angle, correction);
-    }
-
-    private void stop() {
-        double distance = Math.sqrt(Point.distanceSquared(lastKnownLocation, fullStopPosition));
-        double angle = Math.atan2(fullStopPosition.getY() - lastKnownLocation.getY(), fullStopPosition.getX() - lastKnownLocation.getX());
-        double correction = stoppingCompensator.feed(distance, System.currentTimeMillis() / 1000.0);
-        movementExecutor.setDirection(angle, correction);
-    }
 
     private Point tryGetNextTarget() {
         Point next = null;
@@ -145,8 +101,7 @@ public class MotionCommander implements Fiber {
     }
 
     private Point queryOdometryPosition() {
-        // TODO: Something smart, dunno how.
-        return new Point(0, 0, 0 ,false);
+        return new Point(odometry.getX(), odometry.getY(), odometry.getOrientation() ,false);
     }
 
     public Trace registerTrace(Trace trace) {
