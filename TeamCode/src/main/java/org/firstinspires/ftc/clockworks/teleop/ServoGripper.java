@@ -23,19 +23,19 @@ public class ServoGripper extends LinearOpMode {
         waitForStart();
 
 
- /*       public void closeGrip() {
+     // public void closeGrip() {
             servo0.setPosition(0.5);
             servo1.setPosition(0.5);
             servo2.setPosition(0.5);
             servo3.setPosition(0.5);
-        }
+        //}
 
-   /*      public void openGrip() {
+        /* public void openGrip() {
             servo0.setPosition(0.5 - 5.0 / 27);
             servo1.setPosition(0.5 + 5.0 / 27);
             servo2.setPosition(0.5 - 5.0 / 27);
             servo3.setPosition(0.5 + 5.0 / 27);
-        }*/
+       // }*/
         while (true) {
             System.out.println ("lef1: " + servo0.getPosition());
             System.out.println ("servo1: " + servo1.getPosition());
