@@ -112,7 +112,7 @@ public class MotionCommander implements Fiber {
     }
 
     private Point queryOdometryPosition() {
-        return new Point(odometry.getX(), odometry.getY(), odometry.getOrientation() ,false);
+        return new Point(odometry.getX(), odometry.getY(),false);
     }
 
     public Trace registerTrace(Trace trace) {

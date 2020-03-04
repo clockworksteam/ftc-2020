@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.clockworks.algorithm.motion;
 
 public class Point {
-    private final double x, y, rot;
+    private final double x, y;
     private final boolean rough;
 
-    public Point(double x, double y, double rot, boolean rough) {
+    public Point(double x, double y, boolean rough) {
         this.x = x;
         this.y = y;
-        this.rot = rot;
         this.rough = rough;
     }
 
@@ -17,10 +16,6 @@ public class Point {
 
     public double getY() {
         return y;
-    }
-
-    public double getRot() {
-        return rot;
     }
 
     public boolean isRough() {
