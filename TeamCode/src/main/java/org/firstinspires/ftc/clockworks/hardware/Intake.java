@@ -19,7 +19,6 @@ public class Intake implements Fiber {
     public void init(InternalScheduler scheduler) {
         ml.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         ml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ml.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

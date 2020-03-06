@@ -10,21 +10,20 @@ public class BackServos implements Fiber {
     private Servo s;
     private Servo d;
     private boolean servosFree = true;
-    private boolean l;
+
 
     private int sp = 0;
     private int sl = 0;
     private int dp = 0;
     private int dl = 0;
 
-    public void initData(HardwareMap hardwareMap, String basename, boolean left) {
+    public void initData(HardwareMap hardwareMap, String basename) {
         s = hardwareMap.get(Servo.class, basename + "_left");
         d = hardwareMap.get(Servo.class, basename + "_right");
 
         s.setDirection(Servo.Direction.FORWARD);
         d.setDirection(Servo.Direction.REVERSE);
 
-        l = left;
             s.setPosition(0.95);//0.95
             d.setPosition(0.99);
 
