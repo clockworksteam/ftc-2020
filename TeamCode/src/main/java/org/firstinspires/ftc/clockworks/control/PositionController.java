@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.clockworks.control;
 
 
+import org.firstinspires.ftc.clockworks.scheduler.Fiber;
+import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.clockworks.hardware.IMUSensor;
 import org.firstinspires.ftc.clockworks.hardware.MecanumDriver;
@@ -9,38 +11,61 @@ import org.firstinspires.ftc.clockworks.algorithm.AngularPID;
 /**
  * PositionController class for implementing all the algorithms and classes designed for controlling the Mecanum Wheels (PID, IMUSensor and MecanumDriver).
  */
-public class PositionController {
-
+public class PositionController implements Fiber {
 
 
     private MecanumDriver mecanumDriver = new MecanumDriver();
     private IMUSensor imuSensor = new IMUSensor();
     private AngularPID pid = new AngularPID(0.015, 0.000000, 0.0);
     private Telemetry telemetry = null;
-    private double angle = 0, power = 0;
-    private double blindRotatePower = 0;
-    private boolean isBlindRotating = false;
+    private volatile double angle = 0, power = 0;
+    private volatile double blindRotatePower = 0;
+    private volatile boolean isBlindRotating = false;
 
 
+    @Override
+    public void init(InternalScheduler scheduler) {
 
-/**
- * Initializes the PositionController
- * @param telemetry the telemetry logger
- * @param mecanumDriver an instance of the MecanumDriver class which is used to control the motors in the TeleOP.
- * @param imuSensor an instance of the IMUSensor class which is used for getting the angles from the gyro sensor.
- */
-    public void init (Telemetry telemetry, MecanumDriver mecanumDriver, IMUSensor imuSensor){
+    }
+
+    @Override
+    public void tick() {
+        double currentHeading = imuSensor.getHeading();
+        double dir = angle - currentHeading;
+        double rot;
+        if (isBlindRotating) {
+            rot = blindRotatePower;
+        } else {
+            rot = pid.feed(currentHeading, System.currentTimeMillis() / 1000.0);
+        }
+        mecanumDriver.drive(power, dir, rot);
+    }
+
+    @Override
+    public void deinit() {
+
+    }
+
+    /**
+     * Initializes the PositionController
+     *
+     * @param telemetry     the telemetry logger
+     * @param mecanumDriver an instance of the MecanumDriver class which is used to control the motors in the TeleOP.
+     * @param imuSensor     an instance of the IMUSensor class which is used for getting the angles from the gyro sensor.
+     */
+    public void initData(Telemetry telemetry, MecanumDriver mecanumDriver, IMUSensor imuSensor) {
         this.telemetry = telemetry;
         this.mecanumDriver = mecanumDriver;
         this.imuSensor = imuSensor;
     }
 
-/**
- * This method makes the robot rotate around its own axe wit no precision(we don't set any target or distance
- * this is used in TELEOP
- * @param power the power set to the motors in order to rotate
- * @return self reference (this). Useful in chaining methods
- */
+    /**
+     * This method makes the robot rotate around its own axe wit no precision(we don't set any target or distance
+     * this is used in TELEOP
+     *
+     * @param power the power set to the motors in order to rotate
+     * @return self reference (this). Useful in chaining methods
+     */
     public PositionController blindRotate(double power) {
         blindRotatePower = power;
         isBlindRotating = true;
@@ -50,6 +75,7 @@ public class PositionController {
     /**
      * This method should be called when we want to use PID(rotate around its own axe)-precise
      * it sets the heading to which we want the robot to go to(absolute heading)
+     *
      * @param heading the heading to which we want the robot to go to
      * @return self reference (this). Useful in chaining methods
      */
@@ -62,6 +88,7 @@ public class PositionController {
     /**
      * This method should be called in order to find out if we are blind rotating or not
      * it sets the heading to which we want the robot to go to
+     *
      * @return self reference (this). Useful in chaining methods
      */
     public boolean isBlindRotating() {
@@ -72,30 +99,13 @@ public class PositionController {
     /**
      * used when we want the robot to go in a certain direction(absolute,not relative to the current orientation of the robot)
      * it sets the heading to which we want the robot to go to
+     *
      * @return self reference (this). Useful in chaining methods
      */
     public PositionController setDirection(double angle, double power) {
         this.angle = angle;
         this.power = power;
         return this;
-    }
-
-
-    /**
-     * move to a certain angle(dir) +rotate to a certain heading
-     * sets the power to the motors to move to a certain angle(power)
-     * sets the power to the motors to move to a certain heading(rot)
-     */
-    public void update() {
-        double currentHeading = imuSensor.getHeading();
-        double dir = angle - currentHeading;
-        double rot;
-        if (isBlindRotating) {
-            rot = blindRotatePower;
-        } else {
-            rot = pid.feed(currentHeading, System.currentTimeMillis() / 1000.0);
-        }
-        mecanumDriver.drive(power, dir, rot);
     }
 }
 
