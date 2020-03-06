@@ -15,9 +15,11 @@ public class ServoGripperOP extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         servoGripper = new ServoGripper();
 
-        servoGripper.init(hardwareMap , telemetry);
+        servoGripper.init(hardwareMap);
 
         waitForStart();
+
+        servoGripper.tick();
 
         while (opModeIsActive()) {
 

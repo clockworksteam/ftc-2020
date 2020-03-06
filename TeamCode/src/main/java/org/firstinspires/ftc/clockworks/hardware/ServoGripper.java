@@ -8,22 +8,26 @@ import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ServoGripper implements Fiber {
-    Telemetry telemetry;
+/**
+ * This is a class that is used to control our gripper designed for catching stones.
+ */
+
+public class ServoGripper {
 
     Servo servo0 = null;
     Servo servo1 = null;
     Servo servo2 = null;
     Servo servo3 = null;
-    private volatile boolean closed = false;
+    private boolean closed = false;
     private boolean current = false;
 
-    @Override
-    public void init(InternalScheduler scheduler) {
+    /**
+     * Here we declare our four servo motors that are mounted on the gripper in order to move it.
+     * The booleans "closed" and "current" are used in our algorithms in order to get the current state and to set the current state.
+     *
+     */
 
-    }
 
-    @Override
     public void tick() {
         if (current != closed) {
             current = closed;
@@ -41,18 +45,27 @@ public class ServoGripper implements Fiber {
         }
     }
 
-    @Override
-    public void deinit() {
+    /**
+     * This method "tick" is used to make the gripper execute the two movements: opening and closing.
+     * We use 2 "if" conditions in order to make the arbitrary move of the current state.
+     * For example: if the gripper is opened , the code will set all the servos to the position 0.5 (which is the position in which the gripper is closed).
+     * Otherwise the servos will be set to the position (0.35) respectively (0.65) , as this is the position in which the gripper is opened (There are different values because some motors are in opposite positions).
+     *
+     *
+     */
 
-    }
 
-    public void initData (HardwareMap hardwareMap , Telemetry telemetry){
+    public void init(HardwareMap hardwareMap){
         servo0 = hardwareMap.get(Servo.class , "servo0");
         servo1 = hardwareMap.get(Servo.class , "servo1");
         servo2 = hardwareMap.get(Servo.class , "servo2");
         servo3 = hardwareMap.get(Servo.class , "servo3");
     }
 
+    /**
+     * This is the init class.
+     * Here is made the connection between the code and the hardware (servos).
+     */
 
     public void open_gripper () {
         closed = false;
@@ -60,10 +73,19 @@ public class ServoGripper implements Fiber {
 
     }
 
+    /**
+     * This method is used to make the gripper to open by setting the boolean "closed" to false.
+     */
+
 
     public void close_gripper () {
         closed = true;
 
 
     }
+
+    /**
+     * This method is used to make the gripper to close by setting the boolean "closed" to true.
+     */
+
 }
