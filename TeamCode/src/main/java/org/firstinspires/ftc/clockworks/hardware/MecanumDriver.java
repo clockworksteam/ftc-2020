@@ -114,24 +114,25 @@ public class MecanumDriver {
 		double v[] = new double[4];
 		double r[] = new double[4];
 
-		double direction = (currentDirection + 45) * Math.PI / 180;
+		double direction = currentDirection + Math.PI / 4;
 
-		v[0] = (Math.cos(direction) * maxSpeed * currentSpeed);   //
-		v[1] = (Math.sin(direction) * maxSpeed * currentSpeed);   //
-		v[2] = -(-Math.sin(direction) * maxSpeed * currentSpeed); //
-		v[3] = -(-Math.cos(direction) * maxSpeed * currentSpeed); //
+		v[0] = Math.cos(direction) * maxSpeed * currentSpeed;
+		v[1] = Math.sin(direction) * maxSpeed * currentSpeed;
+		v[2] = Math.sin(direction) * maxSpeed * currentSpeed;
+		v[3] = Math.cos(direction) * maxSpeed * currentSpeed;
 
 		r[0] = -angular_speed;
 		r[1] = angular_speed;
 		r[2] = -angular_speed;
 		r[3] = angular_speed;
 
-		for (int k =0; k<4; k++) v[k] += r[k];
+		for (int k = 0; k < 4; k++) v[k] += r[k];
 
-		double maxim = Math.max(Math.max((Math.abs(v[0])) , (Math.abs(v[1])))
-				, Math.max ((Math.abs(v[2])) , (Math.abs(v[3]))));
+		double maxim = Math.max(Math.max((Math.abs(v[0])) , (Math.abs(v[1]))),
+				                Math.max ((Math.abs(v[2])) , (Math.abs(v[3])))
+		);
 
-		for (int k=0; k<4 && maxim > 1; k++) v[k] /= maxim;
+		for (int k = 0; k < 4 && maxim > 1; k++) v[k] /= maxim;
 
 		left_front.setPower(v[0]);
 		right_front.setPower(v[1]);

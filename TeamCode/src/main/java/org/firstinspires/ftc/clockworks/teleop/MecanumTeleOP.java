@@ -58,7 +58,7 @@ public class MecanumTeleOP extends LinearOpMode {
             gyro.readDevice();
 
             if (gamepad1.a && aState != gamepad1.a) {
-                zeroHeading = zeroHeading+180;
+                zeroHeading = zeroHeading + Math.PI;
                 zeroHeading = AngleHelper.norm(zeroHeading);
             }
             aState = gamepad1.a;
