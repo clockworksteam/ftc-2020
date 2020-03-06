@@ -6,22 +6,23 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.clockworks.scheduler.Fiber;
+import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * Driver class for movement with motors in MecanumDriver configuration.
  * Requires both left and right motors to exist in the hardware map.
  */
-public class MecanumDriver {
+public class MecanumDriver  implements Fiber {
 	private Telemetry telemetry = null;
 	private DcMotor left_back = null;
 	private DcMotor right_back = null;
 	private DcMotor left_front = null;
 	private DcMotor right_front = null;
-	private double maxSpeed = 1;
-	private double currentDirection = 0;
-	private double currentSpeed = 0;
-	private double angular_speed;
+	private volatile double currentDirection = 0;
+	private volatile double currentSpeed = 0;
+	private volatile double angular_speed;
 
 	/**
   -	 * Initializes the driver
@@ -66,27 +67,6 @@ public class MecanumDriver {
 	}
 
 	/**
-	 * Limits the motors to a maximum speed. The motors are not cut off
-	 * at the new maximum speed, but instead are scaled to the new max
-	 * @param speed the new maximum speed. must be in range [0, 1000]
-	 * @return self reference (this). Useful in chaining methods
-	 */
-	public MecanumDriver setMaximumSpeed(double speed) {
-		maxSpeed = Range.clip(speed, 0, 1000);
-		maxSpeed /= 1000;
-		updateMotors();
-		return this;
-	}
-
-	/**
-	 * Gets the maximum speed
-	 * @return the maximum speed
-	 */
-	public double getMaximumSpeed() {
-		return maxSpeed * 1000;
-	}
-
-	/**
 	 * Drive the motors
 	 * @param speed The speed to move at. Must be in range [0, 1000] Affected by maximum speed
 	 * @param direction The direction, in angles, relative to current position.
@@ -95,31 +75,28 @@ public class MecanumDriver {
 	 *                  (-) negative angles steer right
 	 * @return self reference (this). Useful in chaining methods
 	 */
-	public MecanumDriver drive(double speed, double direction, double angular_speed) {
+	public void drive(double speed, double direction, double angular_speed) {
 		currentDirection = direction;
 		currentSpeed = Range.clip(speed, 0, 1);
 		this.angular_speed = angular_speed;
-		updateMotors();
-		return this;
 	}
 
+	@Override
+	public void init(InternalScheduler scheduler) {
 
-	/**
-	 * Drive the motors
-	 * direction=the current direction ,degrees->radians
-	 * speed for moving
-	 */
-	private void updateMotors() {
+	}
 
+	@Override
+	public void tick() {
 		double v[] = new double[4];
 		double r[] = new double[4];
 
 		double direction = currentDirection + Math.PI / 4;
 
-		v[0] = Math.cos(direction) * maxSpeed * currentSpeed;
-		v[1] = Math.sin(direction) * maxSpeed * currentSpeed;
-		v[2] = Math.sin(direction) * maxSpeed * currentSpeed;
-		v[3] = Math.cos(direction) * maxSpeed * currentSpeed;
+		v[0] = Math.cos(direction) * currentSpeed;
+		v[1] = Math.sin(direction) * currentSpeed;
+		v[2] = Math.sin(direction) * currentSpeed;
+		v[3] = Math.cos(direction) * currentSpeed;
 
 		r[0] = -angular_speed;
 		r[1] = angular_speed;
@@ -129,7 +106,7 @@ public class MecanumDriver {
 		for (int k = 0; k < 4; k++) v[k] += r[k];
 
 		double maxim = Math.max(Math.max((Math.abs(v[0])) , (Math.abs(v[1]))),
-				                Math.max ((Math.abs(v[2])) , (Math.abs(v[3])))
+				Math.max ((Math.abs(v[2])) , (Math.abs(v[3])))
 		);
 
 		for (int k = 0; k < 4 && maxim > 1; k++) v[k] /= maxim;
@@ -138,5 +115,10 @@ public class MecanumDriver {
 		right_front.setPower(v[1]);
 		left_back.setPower(v[2]);
 		right_back.setPower(v[3]);
+	}
+
+	@Override
+	public void deinit() {
+
 	}
 }
