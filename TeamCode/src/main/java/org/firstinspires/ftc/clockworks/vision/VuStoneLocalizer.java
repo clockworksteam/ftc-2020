@@ -14,7 +14,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-
+/**
+ * This class "VuStoneLocalizer" is our main class for detection. It uses the Vuforia augmented reality software development kit in order to tell us whether there is a Skystone in the image captured by our phone. It also contains some methods which give us some information about the Skystone position so that our robot can get in the right place in order to get? the Skystone with the gripper.
+ *
+ *
+ */
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 public class VuStoneLocalizer {
@@ -44,7 +48,6 @@ public class VuStoneLocalizer {
         stoneTarget.get(0).setLocation(OpenGLMatrix
                 .translation(0, 0, stoneHeight)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYX, AngleUnit.DEGREES, 90, 0, -90)));
-
         stoneTarget.activate();
     }
 
