@@ -40,7 +40,7 @@ public class AnalizatoriOP extends LinearOpMode {
         backServos.initData(hardwareMap, "servo");
         gamepadInput.init(gamepad1, gamepadInput);
         imuSensor.init(telemetry, hardwareMap, "imusensor");
-        servoGripper.initData(hardwareMap, telemetry);
+    //    servoGripper.initData(hardwareMap);
         vustone.init(hardwareMap);
         positionController.initData(telemetry, mecanum, imuSensor);
 
@@ -48,7 +48,7 @@ public class AnalizatoriOP extends LinearOpMode {
         scheduler.register(intake);
         scheduler.register(motionCommander);
         scheduler.register(positionController);
-        scheduler.register(servoGripper);
+       // scheduler.register(servoGripper);
         scheduler.register(mecanum);
 
     }
