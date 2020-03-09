@@ -56,7 +56,7 @@ public class MotionCommander implements Fiber {
         if (activeTarget == null) {
             activeTarget = lastKnownLocation;
             lastTarget = lastKnownLocation;
-            activeTrace = new Trace(new Point[]{ activeTarget }, 0, 0);
+            activeTrace = new Trace(new Point[]{ activeTarget });
         }
 
         if ((state == State.NAVIGATING && range * range >= Point.distanceSquared(activeTarget, lastKnownLocation)) || state == State.STOPPING) {
@@ -66,15 +66,14 @@ public class MotionCommander implements Fiber {
                 renewStrategy(null);
             } else {
                 activeTrace = activeTrace.hasPoint(next) ? activeTrace : queue.poll();
-                range = next.isRough() ? activeTrace.getSkipTolerance() : activeTrace.getContinueTolerance();
+                range = next.getTolerance();
                 state = State.NAVIGATING;
                 renewStrategy(next);
             }
         }
+        activeTrace.callListener(lastKnownLocation.getX(), lastKnownLocation.getY());
 
         if (strategy != null) strategy.run(lastKnownLocation, movementExecutor);
-
-        movementExecutor.update();
     }
 
     @Override
@@ -112,7 +111,7 @@ public class MotionCommander implements Fiber {
     }
 
     private Point queryOdometryPosition() {
-        return new Point(odometry.getX(), odometry.getY(),false);
+        return new Point(odometry.getX(), odometry.getY(), 0);
     }
 
     public Trace registerTrace(Trace trace) {

@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.clockworks.algorithm.motion;
 
 public class Point {
-    private final double x, y;
-    private final boolean rough;
+    private final double x, y, tolerance;
 
-    public Point(double x, double y, boolean rough) {
+    public Point(double x, double y, double tolerance) {
         this.x = x;
         this.y = y;
-        this.rough = rough;
+        this.tolerance = tolerance;
     }
 
     public double getX() {
@@ -18,8 +17,8 @@ public class Point {
         return y;
     }
 
-    public boolean isRough() {
-        return rough;
+    public double getTolerance() {
+        return tolerance;
     }
 
     public static double distanceSquared(Point a, Point b) {
