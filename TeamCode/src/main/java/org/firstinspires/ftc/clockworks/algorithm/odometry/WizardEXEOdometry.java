@@ -5,6 +5,13 @@ package org.firstinspires.ftc.clockworks.algorithm.odometry;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+
+/**
+ * For this season of FTC we decided to use odometers. They are some small wheels located under our robot that are mounted in that way so they can touch the ground. They measure how many times they had rotate upon a given time, so we can use them in order to get the position of our robot in a cartesian coordinate system.
+ * In this season of FTC we are using 3 odometers.
+ */
+
+
 public class WizardEXEOdometry implements TriOdometry {
     private static final MathContext MC = MathContext.UNLIMITED;
 
@@ -12,6 +19,13 @@ public class WizardEXEOdometry implements TriOdometry {
 
     private BigDecimal robotGlobalXCoordinatePosition = new BigDecimal(0, MC), robotGlobalYCoordinatePosition = new BigDecimal(0, MC), robotOrientationRadians = new BigDecimal(0, MC);
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
+
+    /**
+     * Here we declare the variables that will be used in the odometry class. We use "BigDecimal" objects combined with the unlimited "MathContext" in order to make the phone to store infinite decimal numbers.
+     * The attributes declared on the second line will store the robot position in a cartesian coordinate system.
+     * The variables declared on the third line will be used in our algorithm in order to calculate the variation of the movement.
+     */
+
 
     //Algorithm constants
     private final static double robotEncoderWheelDistance = 0.2;
@@ -21,6 +35,10 @@ public class WizardEXEOdometry implements TriOdometry {
     private final static int verticalLeftEncoderPositionMultiplier = 1;
     private final static int verticalRightEncoderPositionMultiplier = 1;
     private final static int normalEncoderPositionMultiplier = 1;
+    /**
+     * These are some algorithm constants that we have calculated throughout various experiments.
+     */
+
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
@@ -57,6 +75,14 @@ public class WizardEXEOdometry implements TriOdometry {
 
         return 0;
     }
+    /**
+     * The method "feed" is called repeatedly in our TeleOP in order to update the robot's position.
+     * We start by calculating the distance traveled (in meters) by the left and right odometers (encoders).
+     *
+     *
+     */
+
+
 
     /**
      * Returns the robot's global x coordinate
