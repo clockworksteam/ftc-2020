@@ -41,7 +41,7 @@ public class MecanumTeleOP extends LinearOpMode {
         telemetry.update();
         wheels.init(telemetry, hardwareMap, "ok");
         gyro.init (telemetry, hardwareMap, "imu");
-        positionController.init(telemetry, wheels, gyro);
+        //positionController.init(telemetry, wheels, gyro);
 
 
 
@@ -79,7 +79,7 @@ public class MecanumTeleOP extends LinearOpMode {
 
             double walkAngle = AngleHelper.norm(controller.getAngleLeft() + zeroHeading);
             positionController.setDirection(walkAngle, controller.getAmplitudeLeft() * turbo);
-            positionController.update();
+          //  positionController.update();
 
             telemetry.addLine().addData("Speed: ", controller.getAmplitudeLeft());
             telemetry.addLine().addData("Direction: ", controller.getAngleLeft());
