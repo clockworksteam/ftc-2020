@@ -5,15 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.clockworks.hardware.BackServos;
-import org.firstinspires.ftc.clockworks.hardware.test.Gripper;
-import org.firstinspires.ftc.clockworks.hardware.Gripping;
 import org.firstinspires.ftc.clockworks.helpers.AngleHelper;
 import org.firstinspires.ftc.clockworks.hardware.MecanumDriver;
 import org.firstinspires.ftc.clockworks.hardware.GamepadInput;
 import org.firstinspires.ftc.clockworks.hardware.IMUSensor;
 import org.firstinspires.ftc.clockworks.control.PositionController;
-
-
+import org.firstinspires.ftc.clockworks.scheduler.ExternalScheduler;
+import org.firstinspires.ftc.clockworks.scheduler.OnDemandScheduler;
 
 
 /**
@@ -28,16 +26,9 @@ public class MecanumTeleOP extends LinearOpMode {
     private MecanumDriver wheels = new MecanumDriver();
     private IMUSensor gyro = new IMUSensor();
     private PositionController positionController = new PositionController();
+    private ExternalScheduler scheduler = OnDemandScheduler.create();
     private double zeroHeading = 0;
-    private Gripping gripper = new Gripping();
-    private boolean closed = false;
-
-    private  boolean xState = false;
-    private boolean bState = false;
     private boolean aState = false;
-
-    private boolean rotated = false;
-    private BackServos servo = new BackServos();
 
 
     /**
@@ -51,66 +42,30 @@ public class MecanumTeleOP extends LinearOpMode {
         wheels.init(telemetry, hardwareMap, "ok");
         gyro.init (telemetry, hardwareMap, "imu");
         positionController.init(telemetry, wheels, gyro);
-        servo.init(hardwareMap, "servo", true);
-        gripper.init(hardwareMap, "Gripper");
 
 
 
         waitForStart();
+
         runtime.reset();
 
-        controller.init(gamepad1);
+        controller.init(gamepad1 , controller);
 
         gyro.readDevice();
         zeroHeading = gyro.getHeading();
         while (opModeIsActive()) {
-            controller.readDevice();
+           // controller.readDevice();
             gyro.readDevice();
 
-            if (gamepad1.dpad_up) {
-                gripper.liftUp();
-            }
-            if (gamepad1.dpad_down) {
-                gripper.liftDown();
-            }
-            if (!gamepad1.dpad_up && !gamepad2.dpad_down) {
-                gripper.liftLock();
-            }
-
-            if (xState != gamepad1.x && gamepad1.x) {
-                closed = !closed;
-                if (closed) {
-                    gripper.closeFront();
-                } else {
-                    gripper.openFront();
-                }
-            }
-            xState = gamepad1.x;
-
-            if(bState != gamepad1.b && gamepad1.b) {
-                servo.prins();
-            }
-            bState = gamepad1.b;
-
-            if (!rotated && gamepad1.left_bumper) {
-                gripper.paralelrotationfront();
-                rotated = true;
-            }
-
             if (gamepad1.a && aState != gamepad1.a) {
-
-                zeroHeading = zeroHeading+180;
+                zeroHeading = zeroHeading + Math.PI;
                 zeroHeading = AngleHelper.norm(zeroHeading);
-            }
-
-            if (gamepad1.right_bumper){
-
-                zeroHeading = gyro.getHeading();
-
-
             }
             aState = gamepad1.a;
 
+            if (gamepad1.right_bumper){
+                zeroHeading = gyro.getHeading();
+            }
             if (controller.getAmplitudeRight() > 0.1) {
                 positionController.blindRotate(-gamepad1.right_stick_x / 2);
             } else {
@@ -119,9 +74,8 @@ public class MecanumTeleOP extends LinearOpMode {
                 }
             }
 
-            double turbo;
+            double turbo = 0.5;
             if (gamepad1.left_trigger > 0) turbo = 1;
-            else turbo = 0.5;
 
             double walkAngle = AngleHelper.norm(controller.getAngleLeft() + zeroHeading);
             positionController.setDirection(walkAngle, controller.getAmplitudeLeft() * turbo);
