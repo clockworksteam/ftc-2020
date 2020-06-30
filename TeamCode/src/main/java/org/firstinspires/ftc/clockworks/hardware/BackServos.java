@@ -6,6 +6,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.clockworks.scheduler.Fiber;
 import org.firstinspires.ftc.clockworks.scheduler.InternalScheduler;
 
+/**
+ * This class is used to control the servos meant to grip the foundation and move it. It implements the
+ * Fiber interface in order to use the scheduler API.
+ */
+
+
 public class BackServos implements Fiber {
     private Servo s;
     private Servo d;
@@ -16,6 +22,12 @@ public class BackServos implements Fiber {
     private int sl = 0;
     private int dp = 0;
     private int dl = 0;
+
+    /**
+     * Basic "init" method for setting the properties of the servos.
+     * @param hardwareMap
+     * @param basename
+     */
 
     public void initData(HardwareMap hardwareMap, String basename) {
         s = hardwareMap.get(Servo.class, basename + "_left");
@@ -29,6 +41,10 @@ public class BackServos implements Fiber {
 
     }
 
+    /**
+     * This method initializes the scheduler API
+     * @param scheduler the scheduler API
+     */
 
     @Override
     public void init(InternalScheduler scheduler) {
@@ -37,6 +53,11 @@ public class BackServos implements Fiber {
 
     }
 
+
+    /**
+     * Changing the servo status.
+     * This can close and open the grip.
+     */
     @Override
     public void tick() {
         if (servosFree) {

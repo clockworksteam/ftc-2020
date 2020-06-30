@@ -113,13 +113,13 @@ public class PositionController implements Fiber {
 
 
 /*
-Prieteni ,avem 5 cazuri:
+Avem 5 cazuri:
 
 1.  Vrem ca robotul sa nu isi schimbe orientarea si sa mearga intr.o directie alfa fata de Nord
     -dam putere si (probabil) ca apelam fuctia asta pt o perioda a de timp t
     -setDirection()
 
-2. sa mergem ca la 1.,doar ca sa mearga o anumita distanta in direactia data??????(inca nu avem fucntie)
+2. sa mergem ca la 1.,doar ca sa mearga o anumita distanta in direactia data(inca nu avem fucntie)
 
 3.  Te rotesti in jurul axei pana la un anumit punct fix(un direction dat la parametrii-absolut)
     -setHeading()
