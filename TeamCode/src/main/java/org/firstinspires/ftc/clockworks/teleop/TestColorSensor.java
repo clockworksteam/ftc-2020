@@ -5,6 +5,10 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+/**
+ * Test class for the ColorSensor. The project is abandoned
+ */
+
 @TeleOp
 public class TestColorSensor extends LinearOpMode {
     private ModernRoboticsI2cColorSensor sensor = null;

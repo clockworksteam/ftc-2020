@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.clockworks.hardware.ServoGripper;
 
+/**
+ * Test TeleOP for the servo gripper.
+ */
+
 @TeleOp
 public class ServoGripperOP extends LinearOpMode {
     ServoGripper servoGripper = null;

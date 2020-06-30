@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.clockworks.algorithm.odometry.HomeMadeOdometry;
 import org.firstinspires.ftc.clockworks.algorithm.odometry.WizardEXEOdometry;
 
+/**
+ * Test TeleOP for one of our odometry class.
+ */
 
 @TeleOp(name = "Odom1", group = "Drive")
 public class Odom1 extends LinearOpMode {

@@ -15,6 +15,10 @@ import org.firstinspires.ftc.clockworks.scheduler.OnDemandScheduler;
 
 import java.util.ArrayList;
 
+/**
+ * TeleOP test for intake class.
+ */
+
 @TeleOp
 public class IntakeOP extends LinearOpMode {
     private GamepadInput controller = new GamepadInput();
